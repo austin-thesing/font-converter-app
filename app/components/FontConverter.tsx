@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import styles from "./FontConverter.module.css";
 
 export default function FontConverter() {
   const [file, setFile] = useState<File | null>(null);
-  const [converting, setConverting] = useState(false);
-  const [result, setResult] = useState<{ woff: string; woff2: string } | null>(null);
+  const [convertedFonts, setConvertedFonts] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -13,10 +15,14 @@ export default function FontConverter() {
     }
   };
 
-  const handleConvert = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (!file) return;
 
-    setConverting(true);
+    setIsLoading(true);
+    setError(null);
+    setConvertedFonts(null);
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -31,33 +37,53 @@ export default function FontConverter() {
       }
 
       const data = await response.json();
-      setResult(data);
-    } catch (error) {
-      console.error("Error converting font:", error);
-      alert("Font conversion failed. Please try again.");
+      setConvertedFonts(data);
+    } catch (err) {
+      setError("An error occurred during conversion");
+      console.error(err);
     } finally {
-      setConverting(false);
+      setIsLoading(false);
     }
   };
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + " bytes";
+    else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + " KB";
+    else return (bytes / 1048576).toFixed(2) + " MB";
+  };
+
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-4">Font Converter</h1>
-      <input type="file" accept=".otf,.ttf" onChange={handleFileChange} className="mb-4" />
-      <button onClick={handleConvert} disabled={!file || converting} className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-300">
-        {converting ? "Converting..." : "Convert"}
-      </button>
-      {result && (
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold mb-2">Converted Fonts:</h2>
-          <div>
-            <a href={`data:font/woff;base64,${result.woff}`} download="converted.woff" className="text-blue-500 underline block mb-2">
-              Download WOFF
-            </a>
-            <a href={`data:font/woff2;base64,${result.woff2}`} download="converted.woff2" className="text-blue-500 underline block">
-              Download WOFF2
-            </a>
-          </div>
+    <div className={styles.container}>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <input type="file" onChange={handleFileChange} accept=".ttf,.otf" className={styles.fileInput} disabled={isLoading} />
+        <button type="submit" className={styles.button} disabled={isLoading || !file}>
+          {isLoading ? "Converting..." : "Convert"}
+        </button>
+      </form>
+
+      {file && <p className={styles.fileInfo}>Original file size: {formatFileSize(file.size)}</p>}
+
+      {isLoading && <p className={styles.loading}>Converting font, please wait...</p>}
+
+      {error && <p className={styles.error}>{error}</p>}
+
+      {convertedFonts && (
+        <div className={styles.results}>
+          <h2>Converted Fonts:</h2>
+          <ul className={styles.downloadList}>
+            <li>
+              <a href={`data:font/woff;base64,${convertedFonts.woff}`} download={`${convertedFonts.originalFileName}.woff`} className={styles.downloadLink}>
+                Download WOFF
+              </a>{" "}
+              <span className={styles.fileSize}>(New size: {formatFileSize(convertedFonts.woffSize)})</span>
+            </li>
+            <li>
+              <a href={`data:font/woff2;base64,${convertedFonts.woff2}`} download={`${convertedFonts.originalFileName}.woff2`} className={styles.downloadLink}>
+                Download WOFF2
+              </a>{" "}
+              <span className={styles.fileSize}>(New size: {formatFileSize(convertedFonts.woff2Size)})</span>
+            </li>
+          </ul>
         </div>
       )}
     </div>
