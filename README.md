@@ -1,8 +1,23 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Font Converter App
+
+This is a [Next.js](https://nextjs.org/) project that allows users to convert fonts from OTF/TTF formats to WOFF and WOFF2 formats. The app provides a simple interface for uploading font files and downloading the converted versions.
+
+## Features
+
+- Convert OTF/TTF fonts to WOFF and WOFF2 formats
+- Display original and converted file sizes
+- Easy-to-use interface with drag-and-drop file upload
+- Server-side font conversion using `fonteditor-core`
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install fonteditor-core @next/font
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
