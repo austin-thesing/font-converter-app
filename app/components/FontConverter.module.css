@@ -5,31 +5,20 @@
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   margin-bottom: 20px;
 }
 
 .fileInput {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
 .button {
-  padding: 10px 20px;
   background-color: #0070f3;
   color: white;
   border: none;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.button:hover {
-  background-color: #0051a2;
 }
 
 .button:disabled {
@@ -37,17 +26,39 @@
   cursor: not-allowed;
 }
 
-.fileInfo {
+.fileList {
   margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.fileInfo {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.loading,
+.error {
+  margin: 10px 0;
 }
 
 .error {
   color: red;
-  margin-bottom: 20px;
 }
 
 .results {
   margin-top: 20px;
+}
+
+.downloadAllButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .downloadList {
@@ -55,32 +66,48 @@
   padding: 0;
 }
 
-.downloadList li {
-  margin-bottom: 10px;
+.fontItem {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
 }
 
-.downloadLink {
-  display: inline-block;
-  padding: 8px 16px;
+.downloadButtons {
+  margin-top: 10px;
+}
+
+.downloadButton {
   background-color: #0070f3;
   color: white;
   text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.downloadLink:hover {
-  background-color: #0051a2;
+  padding: 5px 10px;
+  border-radius: 3px;
+  margin-right: 10px;
 }
 
 .fileSize {
-  margin-left: 10px;
-  font-size: 14px;
+  font-size: 0.9em;
   color: #666;
 }
 
-.loading {
-  color: #0070f3;
-  font-weight: bold;
-  margin-top: 10px;
+.introText {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.introText h1 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #333;
+}
+
+.introText p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666;
 }
