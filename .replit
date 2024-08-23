@@ -1,3 +1,12 @@
+run = "npm run dev"
+modules = ["nodejs-20", "web"]
 [deployment]
-run = ["sh", "-c", "npm install && npm start"]
+run = ["sh", "-c", "npm run dev"]
 deploymentTarget = "cloudrun"
+
+[nix]
+channel = "stable-24_05"
+
+[[ports]]
+localPort = 3000
+externalPort = 80
