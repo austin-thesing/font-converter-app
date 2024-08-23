@@ -1,4 +1,3 @@
 [deployment]
-build = ["sh", "-c", "npm run build"]
-deploymentTarget = "static"
-publicDir = "public"
+run = ["sh", "-c", "npm install && npm start"]
+deploymentTarget = "cloudrun"
