@@ -1,4 +1,6 @@
-import FontConverter from "./components/FontConverter";
+import dynamic from "next/dynamic";
+
+const FontConverter = dynamic(() => import("./components/FontConverter"), { ssr: false });
 
 export default function Home() {
   return (

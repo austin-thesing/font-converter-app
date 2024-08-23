@@ -8,13 +8,14 @@ This is a [Next.js](https://nextjs.org/) project that allows users to convert fo
 - Display original and converted file sizes
 - Easy-to-use interface with drag-and-drop file upload
 - Server-side font conversion using `fonteditor-core`
+- Analytics integration with PostHog
 
 ## Getting Started
 
 First, install the dependencies:
 
 ```bash
-npm install fonteditor-core @next/font
+npm install fonteditor-core @next/font posthog-js
 ```
 
 Then, run the development server:

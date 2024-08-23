@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./FontConverter.module.css";
 import JSZip from "jszip";
+import posthog from "../../lib/posthog";
 
 export default function FontConverter() {
   const [files, setFiles] = useState<File[]>([]);
@@ -10,15 +11,22 @@ export default function FontConverter() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    posthog.capture("font_converter_viewed");
+  }, []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFiles(Array.from(e.target.files));
+      posthog.capture("files_selected", { count: e.target.files.length });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (files.length === 0) return;
+
+    posthog.capture("conversion_started", { count: files.length });
 
     setIsLoading(true);
     setError(null);
@@ -41,7 +49,9 @@ export default function FontConverter() {
 
       const data = await response.json();
       setConvertedFonts(data);
+      posthog.capture("conversion_completed", { count: data.length });
     } catch (err) {
+      posthog.capture("conversion_failed", { error: (err as Error).message });
       setError("An error occurred during conversion");
       console.error(err);
     } finally {
@@ -50,6 +60,8 @@ export default function FontConverter() {
   };
 
   const handleDownloadZip = async () => {
+    posthog.capture("zip_download_started", { count: convertedFonts.length });
+
     const zip = new JSZip();
     convertedFonts.forEach((font) => {
       zip.file(`${font.originalFileName}.woff`, font.woff, { base64: true });
@@ -61,6 +73,7 @@ export default function FontConverter() {
     link.href = url;
     link.download = "converted_fonts.zip";
     link.click();
+    posthog.capture("zip_download_completed", { count: convertedFonts.length });
   };
 
   const formatFileSize = (bytes: number) => {
