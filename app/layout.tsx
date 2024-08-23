@@ -6,11 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Webfont Converter",
-<<<<<<< HEAD
-  description: "Created for personal use only",
-=======
   description: "Convert your fonts to WOFF and WOFF2 formats",
->>>>>>> d453ebc (v2)
 };
 
 export default function RootLayout({
