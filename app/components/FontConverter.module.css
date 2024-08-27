@@ -111,3 +111,33 @@
   line-height: 1.5;
   color: #666;
 }
+
+.recentConversions {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.recentConversions h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.recentConversions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.recentConversions li {
+  margin-bottom: 5px;
+}
+
+.recentConversions a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.recentConversions a:hover {
+  text-decoration: underline;
+}

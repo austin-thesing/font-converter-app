@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     esmExternals: "loose",
   },
-  transpilePackages: ["opentype.js", "wawoff2"],
+  transpilePackages: ["opentype.js", "wawoff2", "@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner"],
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
