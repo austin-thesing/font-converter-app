@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 import styles from "./FontConverter.module.css";
 import JSZip from "jszip";
 import posthog from "../../lib/posthog";
-import { uploadToR2, getSignedUrl } from "../../lib/r2";
 
 export default function FontConverter() {
   const [files, setFiles] = useState<File[]>([]);
   const [convertedFonts, setConvertedFonts] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [recentConversions, setRecentConversions] = useState<{ name: string; date: string }[]>([]);
+  const [recentConversions, setRecentConversions] = useState<{ name: string; date: string; url: string }[]>([]);
 
   useEffect(() => {
     posthog.capture("font_converter_viewed");
@@ -29,54 +28,70 @@ export default function FontConverter() {
     }
   };
 
-  const handleConvert = async () => {
-    if (files.length === 0) return;
+  const formatTimestamp = (date: Date) => {
+    return date
+      .toLocaleString("en-US", {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      })
+      .replace(/[/:]/g, "")
+      .replace(", ", "_") // Add underscore between date and time
+      .replace(" ", "")
+      .toLowerCase();
+  };
 
-    posthog.capture("conversion_started", { count: files.length });
-
+  const handleConvert = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsLoading(true);
     setError(null);
-    setConvertedFonts([]);
-
-    const formData = new FormData();
-    files.forEach((file, index) => {
-      formData.append(`file${index}`, file);
-    });
 
     try {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append(`file`, file);
+      });
+
+      // Generate a human-readable timestamp
+      const timestamp = formatTimestamp(new Date());
+
+      // Create a name for the conversion using the font names and timestamp
+      const fontNames = files.map((f) => f.name.split(".")[0]).join(", ");
+      const conversionName = `convertedfonts_${timestamp}`; // Updated format
+
+      // Add the conversionName and timezone to the formData
+      formData.append("conversionName", conversionName);
+      formData.append("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
+
       const response = await fetch("/api/convert", {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Conversion failed");
+        throw new Error("Font conversion failed");
       }
 
-      const data = await response.json();
-      setConvertedFonts(data);
+      const result = await response.json();
+      setConvertedFonts(result.convertedFonts);
 
-      // Upload original files to R2
-      for (const file of files) {
-        await uploadToR2(file, `original/${file.name}`);
-      }
-
-      // Generate and upload zip file
-      const zipFileName = files.length === 1 ? `${files[0].name.split(".")[0]}.zip` : "converted_fonts.zip";
-      const zipBlob = await generateZipFile(data);
-      await uploadToR2(zipBlob, `converted/${zipFileName}`);
-
-      // Update recent conversions
-      const newConversion = { name: zipFileName, date: new Date().toISOString() };
-      const updatedConversions = [newConversion, ...recentConversions.slice(0, 4)];
+      // Update recent conversions with the R2 public URL and new name format
+      const newConversion = {
+        name: `${fontNames} (${timestamp.replace("_", " ")})`, // Add space for display
+        date: new Date().toISOString(),
+        url: result.downloadUrl,
+      };
+      const updatedConversions = [newConversion, ...recentConversions].slice(0, 5);
       setRecentConversions(updatedConversions);
       localStorage.setItem("recentConversions", JSON.stringify(updatedConversions));
 
-      posthog.capture("conversion_completed", { count: data.length });
+      posthog.capture("fonts_converted", { count: files.length });
     } catch (err) {
-      posthog.capture("conversion_failed", { error: (err as Error).message });
-      setError("An error occurred during conversion");
-      console.error(err);
+      setError(err instanceof Error ? err.message : "An unknown error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -92,20 +107,17 @@ export default function FontConverter() {
   };
 
   const handleDownloadZip = async () => {
-    posthog.capture("zip_download_started", { count: convertedFonts.length });
-
-    const zip = new JSZip();
-    convertedFonts.forEach((font) => {
-      zip.file(`${font.originalFileName}.woff`, font.woff, { base64: true });
-      zip.file(`${font.originalFileName}.woff2`, font.woff2, { base64: true });
-    });
-    const content = await zip.generateAsync({ type: "blob" });
-    const url = URL.createObjectURL(content);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "converted_fonts.zip";
-    link.click();
-    posthog.capture("zip_download_completed", { count: convertedFonts.length });
+    if (convertedFonts.length > 0) {
+      const zipBlob = await generateZipFile(convertedFonts);
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = `convertedfonts_${formatTimestamp(new Date())}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+      posthog.capture("zip_download_completed", { count: convertedFonts.length });
+    }
   };
 
   const formatFileSize = (bytes: number) => {
@@ -114,14 +126,20 @@ export default function FontConverter() {
     else return (bytes / 1048576).toFixed(2) + " MB";
   };
 
-  const handleRecentDownload = async (fileName: string) => {
-    try {
-      const signedUrl = await getSignedUrl(`converted/${fileName}`);
-      window.open(signedUrl, "_blank");
-    } catch (error) {
-      console.error("Error downloading recent conversion:", error);
-      setError("Failed to download recent conversion");
-    }
+  const handleRecentDownload = (conversion: { name: string; url: string; date: string }) => {
+    const link = document.createElement("a");
+    link.href = conversion.url;
+    const fileName = conversion.url.split("/").pop() || `convertedfonts_${formatTimestamp(new Date())}.zip`;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleClearRecentConversions = () => {
+    setRecentConversions([]);
+    localStorage.removeItem("recentConversions");
+    posthog.capture("recent_conversions_cleared");
   };
 
   return (
@@ -134,20 +152,20 @@ export default function FontConverter() {
         </p>
       </div>
 
-      <div className={styles.uploadSection}>
+      <form onSubmit={handleConvert} className={styles.uploadSection}>
         <div className={styles.fileInputWrapper}>
-          <button onClick={() => document.getElementById("fileInput")?.click()} className={styles.chooseFilesButton}>
+          <label htmlFor="fileInput" className={styles.chooseFilesButton}>
             Choose Files
-          </button>
-          <input id="fileInput" type="file" onChange={handleFileChange} multiple accept=".otf,.ttf" style={{ display: "none" }} />
-          <span className={styles.fileInfo}>{files.length > 0 ? `${files.length} file(s) selected` : "No files chosen"}</span>
+          </label>
+          <input id="fileInput" type="file" onChange={handleFileChange} multiple accept=".otf,.ttf" className={styles.hiddenFileInput} />
+          <span className={styles.fileInfo}>{files && files.length > 0 ? `${files.length} file(s) selected` : "No files chosen"}</span>
         </div>
-        <button onClick={handleConvert} disabled={files.length === 0 || isLoading} className={styles.convertButton}>
+        <button type="submit" disabled={!files || files.length === 0 || isLoading} className={styles.convertButton}>
           Convert
         </button>
-      </div>
+      </form>
 
-      {files.length > 0 && (
+      {files && files.length > 0 && (
         <div className={styles.fileList}>
           <h3>Selected Files:</h3>
           <ul>
@@ -167,7 +185,7 @@ export default function FontConverter() {
 
       {error && <p className={styles.error}>{error}</p>}
 
-      {convertedFonts.length > 0 && (
+      {convertedFonts && convertedFonts.length > 0 && (
         <div className={styles.results}>
           <h2>Converted Fonts:</h2>
           <button onClick={handleDownloadZip} className={styles.downloadAllButton}>
@@ -201,12 +219,28 @@ export default function FontConverter() {
           <ul>
             {recentConversions.map((conversion, index) => (
               <li key={index}>
-                <a href="#" onClick={() => handleRecentDownload(conversion.name)}>
-                  {conversion.name} - {new Date(conversion.date).toLocaleString()}
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleRecentDownload(conversion);
+                  }}
+                >
+                  {conversion.name}
                 </a>
               </li>
             ))}
           </ul>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              handleClearRecentConversions();
+            }}
+            className={styles.clearRecentLink}
+          >
+            Clear List
+          </a>
         </div>
       )}
     </div>

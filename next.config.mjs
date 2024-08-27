@@ -11,6 +11,7 @@ const nextConfig = {
     CLOUDFLARE_ACCESS_KEY_ID: process.env.CLOUDFLARE_ACCESS_KEY_ID,
     CLOUDFLARE_SECRET_ACCESS_KEY: process.env.CLOUDFLARE_SECRET_ACCESS_KEY,
     CLOUDFLARE_BUCKET_NAME: process.env.CLOUDFLARE_BUCKET_NAME,
+    PUBLIC_BUCKET_URL: process.env.CLOUDFLARE_PUBLIC_URL,
   },
   transpilePackages: ["opentype.js", "wawoff2", "@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner"],
   webpack: (config, { isServer }) => {

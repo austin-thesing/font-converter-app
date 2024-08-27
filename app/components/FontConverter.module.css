@@ -162,6 +162,7 @@
 }
 
 .chooseFilesButton {
+  display: inline-block;
   background-color: #2196f3;
   color: white;
   padding: 10px 15px;
@@ -170,6 +171,10 @@
   cursor: pointer;
   font-size: 14px;
   margin-right: 10px;
+}
+
+.chooseFilesButton:hover {
+  background-color: #1e87db;
 }
 
 .fileInfo {
@@ -192,7 +197,12 @@
 }
 
 .hiddenFileInput {
-  display: none;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
 .selectedFiles {
@@ -314,4 +324,30 @@
 
 .recentConversions a:hover {
   text-decoration: underline;
+}
+
+.clearRecentLink {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: #ff6b6b; /* Light red color */
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: color 0.3s ease;
+}
+
+.clearRecentLink:hover {
+  color: white;
+}
+
+.recentConversions .clearRecentLink {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: #ff6b6b; /* Light red color */
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: color 0.3s ease;
+}
+
+.recentConversions .clearRecentLink:hover {
+  color: white;
 }
