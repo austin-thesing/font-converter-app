@@ -26,6 +26,8 @@ const s3Client = new S3Client({
   },
 });
 
+const PUBLIC_BUCKET_URL = process.env.PUBLIC_BUCKET_URL || "https://pub-afa0440f6e2a4e5682caebff99d28c7b.r2.dev";
+
 function generateTimestamp(): string {
   const now = new Date();
   return `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}_${now.getHours().toString().padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
@@ -64,7 +66,7 @@ export async function POST(request: NextRequest) {
     await s3Client.send(command);
 
     // Generate a public URL for the uploaded file
-    const publicUrl = `https://${CLOUDFLARE_BUCKET_NAME}.${CLOUDFLARE_ENDPOINT}/fonts/${folderName}/${file.name}`;
+    const publicUrl = `${PUBLIC_BUCKET_URL}/fonts/${folderName}/${file.name}`;
 
     return NextResponse.json(
       {
@@ -128,7 +130,7 @@ export async function GET(request: NextRequest) {
     await s3Client.send(putCommand);
 
     // Generate a public URL for the ZIP file
-    const publicUrl = `https://${CLOUDFLARE_BUCKET_NAME}.${CLOUDFLARE_ENDPOINT}/${zipKey}`;
+    const publicUrl = `${PUBLIC_BUCKET_URL}/${zipKey}`;
 
     return NextResponse.json({ url: publicUrl, filename: zipFileName });
   } catch (error) {
