@@ -5,10 +5,10 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 // Initialize the S3 client
 const s3Client = new S3Client({
   region: "auto",
-  endpoint: process.env.CLOUDFLARE_R2_ENDPOINT,
+  endpoint: process.env.CLOUDFLARE_ENDPOINT,
   credentials: {
-    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
   },
 });
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
   }
 
   const command = new PutObjectCommand({
-    Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME,
+    Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
     Key: key,
   });
 
