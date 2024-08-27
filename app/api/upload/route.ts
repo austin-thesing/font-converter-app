@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import JSZip from "jszip";
+import path from "path";
 
 const CLOUDFLARE_ENDPOINT = process.env.CLOUDFLARE_ENDPOINT;
 const CLOUDFLARE_ACCESS_KEY_ID = process.env.CLOUDFLARE_ACCESS_KEY_ID;
@@ -107,9 +108,12 @@ export async function GET(request: NextRequest) {
     // Generate ZIP content
     const zipContent = await zip.generateAsync({ type: "uint8array" });
 
-    // Create a new PUT command for the ZIP file
-    const zipFileName = `${fontName}.zip`;
+    // Use the folder name as the zip file name
+    const folderName = key.split("/").slice(-2, -1)[0]; // Get the folder name
+    const zipFileName = `${folderName}.zip`;
     const folderPath = key.split("/").slice(0, -1).join("/"); // Get the folder path
+
+    // Create a new PUT command for the ZIP file
     const putCommand = new PutObjectCommand({
       Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
       Key: `${folderPath}/${zipFileName}`,
