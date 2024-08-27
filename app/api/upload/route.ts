@@ -13,6 +13,14 @@ const s3Client = new S3Client({
   },
 });
 
+function generateTimestamp(): string {
+  const now = new Date();
+  return `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}_${now.getHours().toString().padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
+    .getSeconds()
+    .toString()
+    .padStart(2, "0")}`;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -25,16 +33,26 @@ export async function POST(request: NextRequest) {
     const buffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(buffer);
 
+    const fontName = file.name.split(".").slice(0, -1).join("."); // Remove file extension
+    const timestamp = generateTimestamp();
+    const folderName = `${fontName}_${timestamp}`;
+
     const command = new PutObjectCommand({
       Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
-      Key: `fonts/${file.name}`,
+      Key: `fonts/${folderName}/${file.name}`,
       Body: uint8Array,
       ContentType: file.type,
     });
 
     await s3Client.send(command);
 
-    return NextResponse.json({ message: "File uploaded successfully to R2" }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: "File uploaded successfully to R2",
+        folderKey: `fonts/${folderName}/${file.name}`,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
@@ -71,9 +89,10 @@ export async function GET(request: NextRequest) {
 
     // Create a new PUT command for the ZIP file
     const zipFileName = `${fontName}.zip`;
+    const folderPath = key.split("/").slice(0, -1).join("/"); // Get the folder path
     const putCommand = new PutObjectCommand({
       Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
-      Key: `zips/${zipFileName}`,
+      Key: `${folderPath}/${zipFileName}`,
       Body: zipContent,
       ContentType: "application/zip",
       ContentDisposition: `attachment; filename="${zipFileName}"`,
@@ -87,7 +106,7 @@ export async function GET(request: NextRequest) {
       s3Client,
       new GetObjectCommand({
         Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
-        Key: `zips/${zipFileName}`,
+        Key: `${folderPath}/${zipFileName}`,
       }),
       { expiresIn: 3600 }
     );

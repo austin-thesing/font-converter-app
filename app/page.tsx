@@ -1,11 +1,10 @@
-import dynamic from "next/dynamic";
-
-const FontConverter = dynamic(() => import("./components/FontConverter"), { ssr: false });
+import FontUploader from "./components/FontUploader";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <FontConverter />
+    <main>
+      <h1>Font Converter</h1>
+      <FontUploader />
     </main>
   );
 }
