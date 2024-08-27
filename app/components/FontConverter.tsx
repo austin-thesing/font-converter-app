@@ -25,6 +25,9 @@ export default function FontConverter() {
     if (e.target.files) {
       setFiles(Array.from(e.target.files));
       posthog.capture("files_selected", { count: e.target.files.length });
+      // New event: Capture file types
+      const fileTypes = Array.from(e.target.files).map((file) => file.type);
+      posthog.capture("file_types_selected", { types: fileTypes });
     }
   };
 
@@ -67,6 +70,7 @@ export default function FontConverter() {
       formData.append("conversionName", conversionName);
       formData.append("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
 
+      const startTime = Date.now();
       const response = await fetch("/api/convert", {
         method: "POST",
         body: formData,
@@ -89,9 +93,20 @@ export default function FontConverter() {
       setRecentConversions(updatedConversions);
       localStorage.setItem("recentConversions", JSON.stringify(updatedConversions));
 
-      posthog.capture("fonts_converted", { count: files.length });
+      posthog.capture("fonts_converted", {
+        count: files.length,
+        conversionTime: Date.now() - startTime, // Add conversion time
+      });
+
+      // New event: Capture conversion success rate
+      posthog.capture("conversion_success_rate", {
+        total: files.length,
+        successful: result.convertedFonts.length,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unknown error occurred");
+      // New event: Capture conversion failure
+      posthog.capture("conversion_failed", { error: err instanceof Error ? err.message : "Unknown error" });
     } finally {
       setIsLoading(false);
     }
@@ -116,7 +131,10 @@ export default function FontConverter() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(link.href);
-      posthog.capture("zip_download_completed", { count: convertedFonts.length });
+      posthog.capture("zip_download_completed", {
+        count: convertedFonts.length,
+        totalSize: zipBlob.size, // Add total size of the ZIP file
+      });
     }
   };
 
@@ -134,6 +152,8 @@ export default function FontConverter() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    // New event: Capture recent conversion download
+    posthog.capture("recent_conversion_downloaded", { conversionName: conversion.name });
   };
 
   const handleClearRecentConversions = () => {
@@ -196,13 +216,23 @@ export default function FontConverter() {
               <li key={index} className={styles.fontItem}>
                 <p>{font.originalFileName}</p>
                 <div className={styles.downloadButtons}>
-                  <a href={`data:font/woff;base64,${font.woff}`} download={`${font.originalFileName}.woff`} className={styles.downloadButton}>
+                  <a
+                    href={`data:font/woff;base64,${font.woff}`}
+                    download={`${font.originalFileName}.woff`}
+                    className={styles.downloadButton}
+                    onClick={() => posthog.capture("individual_font_downloaded", { format: "woff", fileName: font.originalFileName })}
+                  >
                     Download WOFF
                   </a>
                   <span className={styles.fileSize}>(New size: {formatFileSize(font.woffSize)})</span>
                 </div>
                 <div className={styles.downloadButtons}>
-                  <a href={`data:font/woff2;base64,${font.woff2}`} download={`${font.originalFileName}.woff2`} className={styles.downloadButton}>
+                  <a
+                    href={`data:font/woff2;base64,${font.woff2}`}
+                    download={`${font.originalFileName}.woff2`}
+                    className={styles.downloadButton}
+                    onClick={() => posthog.capture("individual_font_downloaded", { format: "woff2", fileName: font.originalFileName })}
+                  >
                     Download WOFF2
                   </a>
                   <span className={styles.fileSize}>(New size: {formatFileSize(font.woff2Size)})</span>
