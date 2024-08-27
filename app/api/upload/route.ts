@@ -26,9 +26,6 @@ const s3Client = new S3Client({
   },
 });
 
-// ... rest of the file remains the same, just ensure all occurrences of
-// CLOUDFLARE_R2_BUCKET_NAME are replaced with CLOUDFLARE_BUCKET_NAME
-
 function generateTimestamp(): string {
   const now = new Date();
   return `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}_${now.getHours().toString().padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
@@ -88,57 +85,83 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    console.log(`Attempting to retrieve file with key: ${key}`);
+
     // Get the font file from R2
     const getCommand = new GetObjectCommand({
       Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
       Key: key,
     });
 
-    const { Body, ContentType } = await s3Client.send(getCommand);
+    let response;
+    try {
+      response = await s3Client.send(getCommand);
+    } catch (error) {
+      console.error(`Error retrieving file from R2: ${error}`);
+      return NextResponse.json({ error: "File not found in R2" }, { status: 404 });
+    }
+
+    const { Body, ContentType } = response;
 
     if (!Body) {
-      return NextResponse.json({ error: "File not found" }, { status: 404 });
+      console.error(`File body is empty for key: ${key}`);
+      return NextResponse.json({ error: "File content is empty" }, { status: 404 });
     }
 
     // Create a ZIP file
     const zip = new JSZip();
-    const fontName = key.split("/").pop() || "converted-font";
+    const fontName = path.basename(key);
     zip.file(fontName, await Body.transformToByteArray());
 
     // Generate ZIP content
     const zipContent = await zip.generateAsync({ type: "uint8array" });
 
-    // Use the folder name as the zip file name
-    const folderName = key.split("/").slice(-2, -1)[0]; // Get the folder name
-    const zipFileName = `${folderName}.zip`;
-    const folderPath = key.split("/").slice(0, -1).join("/"); // Get the folder path
+    // Extract the folder path and create a zip filename
+    const folderPath = path.dirname(key);
+    const zipFileName = `${path.basename(folderPath)}.zip`;
+    const zipKey = `${folderPath}/${zipFileName}`;
+
+    console.log(`Uploading zip file with key: ${zipKey}`);
 
     // Create a new PUT command for the ZIP file
     const putCommand = new PutObjectCommand({
       Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
-      Key: `${folderPath}/${zipFileName}`,
+      Key: zipKey,
       Body: zipContent,
       ContentType: "application/zip",
       ContentDisposition: `attachment; filename="${zipFileName}"`,
     });
 
     // Upload the ZIP file to R2
-    await s3Client.send(putCommand);
+    try {
+      await s3Client.send(putCommand);
+    } catch (error) {
+      console.error(`Error uploading zip file to R2: ${error}`);
+      return NextResponse.json({ error: "Failed to upload zip file" }, { status: 500 });
+    }
+
+    console.log(`Generating signed URL for key: ${zipKey}`);
 
     // Generate a signed URL for the ZIP file
-    const signedUrl = await getSignedUrl(
-      s3Client,
-      new GetObjectCommand({
-        Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
-        Key: `${folderPath}/${zipFileName}`,
-      }),
-      { expiresIn: 3600 }
-    );
+    let signedUrl;
+    try {
+      signedUrl = await getSignedUrl(
+        s3Client,
+        new GetObjectCommand({
+          Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+          Key: zipKey,
+        }),
+        { expiresIn: 3600 }
+      );
+    } catch (error) {
+      console.error(`Error generating signed URL: ${error}`);
+      return NextResponse.json({ error: "Failed to generate signed URL" }, { status: 500 });
+    }
 
     return NextResponse.json({ url: signedUrl, filename: zipFileName });
   } catch (error) {
-    console.error("Error generating signed URL:", error);
-    const errorMessage = error instanceof Error ? error.message : "Failed to generate signed URL";
+    console.error(`Unexpected error in GET function: ${error}`);
+    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
