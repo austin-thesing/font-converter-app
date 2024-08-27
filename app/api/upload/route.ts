@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import { join } from "path";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -23,14 +21,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const buffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(buffer);
 
-    // Specify the path where you want to save the file
-    const path = join(process.cwd(), "public", "fonts", file.name);
-    await writeFile(path, buffer);
+    const command = new PutObjectCommand({
+      Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME,
+      Key: `fonts/${file.name}`,
+      Body: uint8Array,
+      ContentType: file.type,
+    });
 
-    return NextResponse.json({ message: "File uploaded successfully" }, { status: 200 });
+    await s3Client.send(command);
+
+    return NextResponse.json({ message: "File uploaded successfully to R2" }, { status: 200 });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
