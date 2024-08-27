@@ -11,7 +11,7 @@ export default function FontConverter() {
   const [convertedFonts, setConvertedFonts] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [recentConversions, setRecentConversions] = useState<string[]>([]);
+  const [recentConversions, setRecentConversions] = useState<{ name: string; date: string }[]>([]);
 
   useEffect(() => {
     posthog.capture("font_converter_viewed");
