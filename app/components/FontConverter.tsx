@@ -167,8 +167,8 @@ export default function FontConverter() {
       <div className={styles.introText}>
         <h1>Webfont Converter</h1>
         <p>
-          This tool is for personal use only. Please ensure you have the necessary rights or licenses to convert and use the fonts. Do not use this tool to violate any font licensing agreements or copyright laws. By using this converter, you
-          acknowledge that you are responsible for complying with all applicable font usage restrictions.
+          Disclaimer: This tool is for personal use only. Please ensure you have the rights or licenses to convert and use the fonts. Do not use this tool to violate font licensing agreements or copyright laws. By using this converter, you
+          acknowledge you are responsible for following all the font usage restrictions.
         </p>
       </div>
 
@@ -273,6 +273,16 @@ export default function FontConverter() {
           </a>
         </div>
       )}
+
+      <footer className={styles.footer}>
+        <p>&copy; 2024 Design X Develop LLC. All rights reserved.</p>
+        <p>
+          Created by{" "}
+          <a href="https://www.linkedin.com/in/austinthesing" target="_blank" rel="noopener noreferrer">
+            Austin Thesing
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
