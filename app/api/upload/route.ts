@@ -3,21 +3,30 @@ import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import JSZip from "jszip";
 
-// Initialize the S3 client
-const s3Client = new S3Client({
-  region: "auto",
-  endpoint: process.env.CLOUDFLARE_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
-  },
-});
-
+const CLOUDFLARE_ENDPOINT = process.env.CLOUDFLARE_ENDPOINT;
+const CLOUDFLARE_ACCESS_KEY_ID = process.env.CLOUDFLARE_ACCESS_KEY_ID;
+const CLOUDFLARE_SECRET_ACCESS_KEY = process.env.CLOUDFLARE_SECRET_ACCESS_KEY;
 const CLOUDFLARE_BUCKET_NAME = process.env.CLOUDFLARE_BUCKET_NAME;
 
 if (!CLOUDFLARE_BUCKET_NAME) {
-  console.error("CLOUDFLARE_BUCKET_NAME is not set in the environment variables");
+  throw new Error("CLOUDFLARE_BUCKET_NAME is not set in environment variables");
 }
+
+if (!CLOUDFLARE_ENDPOINT) {
+  throw new Error("CLOUDFLARE_ENDPOINT is not set in environment variables");
+}
+
+const s3Client = new S3Client({
+  region: "auto",
+  endpoint: CLOUDFLARE_ENDPOINT,
+  credentials: {
+    accessKeyId: CLOUDFLARE_ACCESS_KEY_ID!,
+    secretAccessKey: CLOUDFLARE_SECRET_ACCESS_KEY!,
+  },
+});
+
+// ... rest of the file remains the same, just ensure all occurrences of
+// CLOUDFLARE_R2_BUCKET_NAME are replaced with CLOUDFLARE_BUCKET_NAME
 
 function generateTimestamp(): string {
   const now = new Date();
