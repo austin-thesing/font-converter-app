@@ -63,14 +63,21 @@ export async function POST(request: NextRequest) {
 
     await s3Client.send(command);
 
+    // Generate a public URL for the uploaded file
+    const publicUrl = `https://${CLOUDFLARE_BUCKET_NAME}.${CLOUDFLARE_ENDPOINT}/fonts/${folderName}/${file.name}`;
+
     return NextResponse.json(
       {
         message: "File uploaded successfully to R2",
         folderKey: `fonts/${folderName}/${file.name}`,
+        publicUrl,
+        fileName: file.name,
+        uploadTimestamp: timestamp,
       },
       { status: 200 }
     );
   } catch (error) {
+    console.error("Error in POST function:", error);
     const errorMessage = error instanceof Error ? error.message : "Upload failed";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
@@ -85,47 +92,32 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    console.log(`Attempting to retrieve file with key: ${key}`);
-
     // Get the font file from R2
     const getCommand = new GetObjectCommand({
-      Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+      Bucket: CLOUDFLARE_BUCKET_NAME,
       Key: key,
     });
 
-    let response;
-    try {
-      response = await s3Client.send(getCommand);
-    } catch (error) {
-      console.error(`Error retrieving file from R2: ${error}`);
-      return NextResponse.json({ error: "File not found in R2" }, { status: 404 });
-    }
-
-    const { Body, ContentType } = response;
+    const { Body, ContentType } = await s3Client.send(getCommand);
 
     if (!Body) {
-      console.error(`File body is empty for key: ${key}`);
-      return NextResponse.json({ error: "File content is empty" }, { status: 404 });
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
     // Create a ZIP file
     const zip = new JSZip();
-    const fontName = path.basename(key);
-    zip.file(fontName, await Body.transformToByteArray());
+    const fontName = path.basename(key, path.extname(key)); // Get font name without extension
+    const fontExtension = path.extname(key);
+    zip.file(`${fontName}${fontExtension}`, await Body.transformToByteArray());
 
     // Generate ZIP content
     const zipContent = await zip.generateAsync({ type: "uint8array" });
 
-    // Extract the folder path and create a zip filename
-    const folderPath = path.dirname(key);
-    const zipFileName = `${path.basename(folderPath)}.zip`;
-    const zipKey = `${folderPath}/${zipFileName}`;
-
-    console.log(`Uploading zip file with key: ${zipKey}`);
-
     // Create a new PUT command for the ZIP file
+    const zipFileName = `${fontName}_converted.zip`;
+    const zipKey = `${path.dirname(key)}/${zipFileName}`;
     const putCommand = new PutObjectCommand({
-      Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+      Bucket: CLOUDFLARE_BUCKET_NAME,
       Key: zipKey,
       Body: zipContent,
       ContentType: "application/zip",
@@ -133,36 +125,15 @@ export async function GET(request: NextRequest) {
     });
 
     // Upload the ZIP file to R2
-    try {
-      await s3Client.send(putCommand);
-    } catch (error) {
-      console.error(`Error uploading zip file to R2: ${error}`);
-      return NextResponse.json({ error: "Failed to upload zip file" }, { status: 500 });
-    }
+    await s3Client.send(putCommand);
 
-    console.log(`Generating signed URL for key: ${zipKey}`);
+    // Generate a public URL for the ZIP file
+    const publicUrl = `https://${CLOUDFLARE_BUCKET_NAME}.${CLOUDFLARE_ENDPOINT}/${zipKey}`;
 
-    // Generate a signed URL for the ZIP file
-    let signedUrl;
-    try {
-      signedUrl = await getSignedUrl(
-        s3Client,
-        new GetObjectCommand({
-          Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
-          Key: zipKey,
-        }),
-        { expiresIn: 3600 }
-      );
-    } catch (error) {
-      console.error(`Error generating signed URL: ${error}`);
-      return NextResponse.json({ error: "Failed to generate signed URL" }, { status: 500 });
-    }
-
-    return NextResponse.json({ url: signedUrl, filename: zipFileName });
+    return NextResponse.json({ url: publicUrl, filename: zipFileName });
   } catch (error) {
-    console.error(`Unexpected error in GET function: ${error}`);
-    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    console.error("Error in GET function:", error);
+    return NextResponse.json({ error: "Failed to generate public URL" }, { status: 500 });
   }
 }
 
