@@ -16,19 +16,20 @@ const s3Client = new S3Client({
 });
 
 export async function uploadToR2(file: File | Blob, key: string) {
-  const command = new PutObjectCommand({
-    Bucket: R2_BUCKET_NAME,
-    Key: key,
-    Body: file,
+  console.log("Uploading file:", key);
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`/api/upload?key=${encodeURIComponent(key)}`, {
+    method: "POST",
+    body: formData,
   });
 
-  try {
-    await s3Client.send(command);
-    console.log(`File uploaded successfully to R2: ${key}`);
-  } catch (error) {
-    console.error("Error uploading file to R2:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error("Upload failed");
   }
+
+  return response.json();
 }
 
 export async function getSignedUrl(key: string) {
