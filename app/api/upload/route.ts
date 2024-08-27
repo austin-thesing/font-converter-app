@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import JSZip from "jszip";
 
 // Initialize the S3 client
 const s3Client = new S3Client({
@@ -35,7 +36,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: "File uploaded successfully to R2" }, { status: 200 });
   } catch (error) {
-    console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }
@@ -48,16 +48,52 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Key is required" }, { status: 400 });
   }
 
-  const command = new PutObjectCommand({
-    Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
-    Key: key,
-  });
-
   try {
-    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-    return NextResponse.json({ url: signedUrl });
+    // Get the font file from R2
+    const getCommand = new GetObjectCommand({
+      Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+      Key: key,
+    });
+
+    const { Body, ContentType } = await s3Client.send(getCommand);
+
+    if (!Body) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
+
+    // Create a ZIP file
+    const zip = new JSZip();
+    const fontName = key.split("/").pop() || "converted-font";
+    zip.file(fontName, await Body.transformToByteArray());
+
+    // Generate ZIP content
+    const zipContent = await zip.generateAsync({ type: "uint8array" });
+
+    // Create a new PUT command for the ZIP file
+    const zipFileName = `${fontName}.zip`;
+    const putCommand = new PutObjectCommand({
+      Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+      Key: `zips/${zipFileName}`,
+      Body: zipContent,
+      ContentType: "application/zip",
+      ContentDisposition: `attachment; filename="${zipFileName}"`,
+    });
+
+    // Upload the ZIP file to R2
+    await s3Client.send(putCommand);
+
+    // Generate a signed URL for the ZIP file
+    const signedUrl = await getSignedUrl(
+      s3Client,
+      new GetObjectCommand({
+        Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+        Key: `zips/${zipFileName}`,
+      }),
+      { expiresIn: 3600 }
+    );
+
+    return NextResponse.json({ url: signedUrl, filename: zipFileName });
   } catch (error) {
-    console.error("Error generating signed URL:", error);
     return NextResponse.json({ error: "Failed to generate signed URL" }, { status: 500 });
   }
 }
