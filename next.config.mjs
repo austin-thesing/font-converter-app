@@ -28,5 +28,3 @@ const nextConfig = {
 };
 
 export default nextConfig;
-
-//updated

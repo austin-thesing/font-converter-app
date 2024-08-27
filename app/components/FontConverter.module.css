@@ -1,4 +1,4 @@
-.container {
+/* .container {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
@@ -24,6 +24,180 @@
 .button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.fileList {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.fileInfo {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.loading,
+.error {
+  margin: 10px 0;
+}
+
+.error {
+  color: red;
+}
+
+.results {
+  margin-top: 20px;
+}
+
+.downloadAllButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.downloadList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.fontItem {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.downloadButtons {
+  margin-top: 10px;
+}
+
+.downloadButton {
+  background-color: #0070f3;
+  color: white;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  margin-right: 10px;
+}
+
+.fileSize {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.introText {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.introText h1 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #333;
+}
+
+.introText p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666;
+}
+
+.recentConversions {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.recentConversions h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.recentConversions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.recentConversions li {
+  margin-bottom: 5px;
+}
+
+.recentConversions a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.recentConversions a:hover {
+  text-decoration: underline;
+} */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.uploadSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.fileInputWrapper {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.chooseFilesButton {
+  background-color: #2196f3;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.fileInfo {
+  font-size: 14px;
+}
+
+.convertButton {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.convertButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+.selectedFiles {
+  margin-right: 10px;
+  font-size: 14px;
 }
 
 .fileList {

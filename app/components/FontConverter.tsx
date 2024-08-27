@@ -29,8 +29,7 @@ export default function FontConverter() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleConvert = async () => {
     if (files.length === 0) return;
 
     posthog.capture("conversion_started", { count: files.length });
@@ -135,12 +134,18 @@ export default function FontConverter() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <input type="file" onChange={handleFileChange} accept=".ttf,.otf" multiple className={styles.fileInput} disabled={isLoading} />
-        <button type="submit" className={styles.button} disabled={isLoading || files.length === 0}>
-          {isLoading ? "Converting..." : "Convert"}
+      <div className={styles.uploadSection}>
+        <div className={styles.fileInputWrapper}>
+          <button onClick={() => document.getElementById("fileInput")?.click()} className={styles.chooseFilesButton}>
+            Choose Files
+          </button>
+          <input id="fileInput" type="file" onChange={handleFileChange} multiple accept=".otf,.ttf" style={{ display: "none" }} />
+          <span className={styles.fileInfo}>{files.length > 0 ? `${files.length} file(s) selected` : "No files chosen"}</span>
+        </div>
+        <button onClick={handleConvert} disabled={files.length === 0 || isLoading} className={styles.convertButton}>
+          Convert
         </button>
-      </form>
+      </div>
 
       {files.length > 0 && (
         <div className={styles.fileList}>

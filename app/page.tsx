@@ -1,10 +1,9 @@
-import FontUploader from "./components/FontUploader";
+import FontConverter from "./components/FontConverter";
 
 export default function Home() {
   return (
     <main>
-      <h1>Font Converter</h1>
-      <FontUploader />
+      <FontConverter />
     </main>
   );
 }
