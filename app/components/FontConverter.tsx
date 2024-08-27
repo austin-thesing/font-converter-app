@@ -275,13 +275,18 @@ export default function FontConverter() {
       )}
 
       <footer className={styles.footer}>
-        <p>&copy; 2024 Design X Develop LLC. All rights reserved.</p>
+        {/* <p>&copy; 2024 Design X Develop LLC</p> */}
         <p>
           Created by{" "}
-          <a href="https://www.linkedin.com/in/austinthesing" target="_blank" rel="noopener noreferrer">
+          <a className={styles.footerLink} href="https://www.linkedin.com/in/austinthesing" target="_blank" rel="noopener noreferrer">
             Austin Thesing
+          </a>{" "}
+          /{" "}
+          <a className={styles.footerLink} href="https://twitter.com/austinthesing" target="_blank" rel="noopener noreferrer">
+            @austinthesing
           </a>
         </p>
+        <p>All rights to converted fonts belong to their respective owners and or the font licensees.</p>
       </footer>
     </div>
   );
