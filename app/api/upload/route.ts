@@ -13,6 +13,12 @@ const s3Client = new S3Client({
   },
 });
 
+const CLOUDFLARE_BUCKET_NAME = process.env.CLOUDFLARE_BUCKET_NAME;
+
+if (!CLOUDFLARE_BUCKET_NAME) {
+  console.error("CLOUDFLARE_BUCKET_NAME is not set in the environment variables");
+}
+
 function generateTimestamp(): string {
   const now = new Date();
   return `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}_${now.getHours().toString().padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
@@ -23,6 +29,10 @@ function generateTimestamp(): string {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!CLOUDFLARE_BUCKET_NAME) {
+      throw new Error("CLOUDFLARE_BUCKET_NAME is not set");
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 
@@ -54,7 +64,9 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    console.error("Upload error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Upload failed";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
@@ -113,7 +125,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ url: signedUrl, filename: zipFileName });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to generate signed URL" }, { status: 500 });
+    console.error("Error generating signed URL:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to generate signed URL";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
