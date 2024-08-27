@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import styles from "./FontUploader.module.css";
 
 interface UploadResponse {
   message: string;
@@ -84,11 +85,17 @@ export default function FontUploader() {
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} accept=".otf,.ttf" />
-      <button onClick={handleUpload}>Upload and Convert</button>
-      <p>{uploadStatus}</p>
-      {downloadUrl && <button onClick={handleDownload}>Download Converted Font</button>}
+    <div className={styles.container}>
+      <input type="file" onChange={handleFileChange} accept=".otf,.ttf" className={styles.fileInput} />
+      <button onClick={handleUpload} className={styles.button}>
+        Upload and Convert
+      </button>
+      <p className={styles.status}>{uploadStatus}</p>
+      {downloadUrl && (
+        <button onClick={handleDownload} className={styles.button}>
+          Download Converted Font
+        </button>
+      )}
     </div>
   );
 }
