@@ -1,7 +1,16 @@
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     esmExternals: "loose",
+  },
+  env: {
+    CLOUDFLARE_ENDPOINT: process.env.CLOUDFLARE_ENDPOINT,
+    CLOUDFLARE_ACCESS_KEY_ID: process.env.CLOUDFLARE_ACCESS_KEY_ID,
+    CLOUDFLARE_SECRET_ACCESS_KEY: process.env.CLOUDFLARE_SECRET_ACCESS_KEY,
+    CLOUDFLARE_BUCKET_NAME: process.env.CLOUDFLARE_BUCKET_NAME,
   },
   transpilePackages: ["opentype.js", "wawoff2", "@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner"],
   webpack: (config, { isServer }) => {
