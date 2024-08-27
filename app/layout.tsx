@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Webfont Converter",
   description: "Convert your fonts to WOFF and WOFF2 formats",
+  viewport: "width=device-width, initial-scale=1", // Add this line
 };
 
 export default function RootLayout({

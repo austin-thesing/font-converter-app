@@ -2,6 +2,7 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
+  width: 100%;
 }
 
 .uploadSection {
@@ -99,6 +100,7 @@
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  width: 100%;
   margin-bottom: 20px;
 }
 
@@ -115,6 +117,9 @@
 }
 
 .downloadButtons {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   margin-top: 10px;
 }
 
@@ -124,7 +129,10 @@
   text-decoration: none;
   padding: 5px 10px;
   border-radius: 3px;
-  margin-right: 10px;
+  width: 100%;
+  margin-right: 0;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .fileSize {
@@ -186,7 +194,7 @@
 .clearRecentLink {
   display: inline-block;
   margin-top: 1.5rem;
-  color: #ff6b6b; /* Light red color */
+  color: #ff6b6b;
   text-decoration: none;
   font-size: 0.9em;
   transition: color 0.3s ease;
@@ -199,7 +207,7 @@
 .recentConversions .clearRecentLink {
   display: inline-block;
   margin-top: 1.5rem;
-  color: #ff6b6b; /* Light red color */
+  color: #ff6b6b;
   text-decoration: none;
   font-size: 0.9em;
   transition: color 0.3s ease;
@@ -231,4 +239,93 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+/* Add media queries for larger screens */
+@media (min-width: 768px) {
+  .uploadSection {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .fileInputWrapper {
+    flex-direction: row;
+    margin-bottom: 0;
+  }
+
+  .chooseFilesButton {
+    width: auto;
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+
+  .convertButton {
+    width: auto;
+  }
+
+  .downloadButtons {
+    flex-direction: row;
+  }
+
+  .downloadButton {
+    width: auto;
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .uploadSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fileInputWrapper {
+    flex-direction: column;
+    align-items: stretch;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .chooseFilesButton,
+  .convertButton {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+    text-align: center; /* Center the text */
+  }
+
+  .fileInfo {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .downloadButtons {
+    flex-direction: column;
+  }
+
+  .downloadButton {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .introText h1 {
+    font-size: 20px;
+  }
+
+  .introText p,
+  .fileInfo,
+  .selectedFiles,
+  .recentConversions {
+    font-size: 14px;
+  }
+
+  .chooseFilesButton,
+  .convertButton,
+  .downloadButton {
+    font-size: 16px;
+    padding: 12px 15px;
+  }
 }
