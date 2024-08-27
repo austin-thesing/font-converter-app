@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const uint8Array = new Uint8Array(buffer);
 
     const command = new PutObjectCommand({
-      Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME,
+      Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
       Key: `fonts/${file.name}`,
       Body: uint8Array,
       ContentType: file.type,
