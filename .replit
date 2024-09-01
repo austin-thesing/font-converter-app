@@ -1,7 +1,8 @@
-run = "npm run dev"
+run = "npm run start"
+build = "npm run build"
 modules = ["nodejs-20", "web"]
 [deployment]
-run = ["sh", "-c", "npm run dev"]
+run = ["sh", "-c", "npm run deploy"]
 deploymentTarget = "cloudrun"
 
 [nix]
