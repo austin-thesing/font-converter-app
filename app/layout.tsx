@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Webfont Converter",
+  title: process.env.NODE_ENV === "production" ? "Webfont Converter" : "Webfont Converter (Dev)",
   description: "Convert your fonts to WOFF and WOFF2 formats",
 };
 
@@ -21,7 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {process.env.NODE_ENV !== "production" && <div style={{ background: "yellow", padding: "10px", textAlign: "center" }}>Development Mode</div>}
+        {children}
+      </body>
     </html>
   );
 }
