@@ -38,3 +38,5 @@ next-env.d.ts
 .replit
 
 /prompts
+
+.env.local
