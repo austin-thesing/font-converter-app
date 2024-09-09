@@ -6,17 +6,18 @@ import JSZip from "jszip";
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  console.log(
-    "CLOUDFLARE_BUCKET_NAME in route:",
-    process.env.CLOUDFLARE_BUCKET_NAME,
-  );
+  const CLOUDFLARE_BUCKET_NAME = process.env.REPL_OWNER ? process.env[`REPL_OWNER_${process.env.REPL_OWNER}_CLOUDFLARE_BUCKET_NAME`] : process.env.CLOUDFLARE_BUCKET_NAME;
+
+  console.log("CLOUDFLARE_BUCKET_NAME:", CLOUDFLARE_BUCKET_NAME);
+
+  console.log("Environment variables:", {
+    CLOUDFLARE_BUCKET_NAME: process.env.CLOUDFLARE_BUCKET_NAME,
+    NODE_ENV: process.env.NODE_ENV,
+  });
 
   if (!process.env.CLOUDFLARE_BUCKET_NAME) {
-    console.error("CLOUDFLARE_BUCKET_NAME is not set in the route");
-    return NextResponse.json(
-      { error: "Server configuration error" },
-      { status: 500 },
-    );
+    console.error("CLOUDFLARE_BUCKET_NAME is not set in environment variables");
+    return NextResponse.json({ error: "Server configuration error: CLOUDFLARE_BUCKET_NAME is missing" }, { status: 500 });
   }
   // Handle CORS
   const origin = request.headers.get("origin");
@@ -38,9 +39,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const data = await request.formData();
-    const files = Array.from(data.values()).filter(
-      (value) => value instanceof File,
-    ) as File[];
+    const files = Array.from(data.values()).filter((value) => value instanceof File) as File[];
     const conversionName = data.get("conversionName") as string;
     const timezone = data.get("timezone") as string;
 
@@ -52,7 +51,7 @@ export async function POST(request: NextRequest) {
           headers: {
             "Access-Control-Allow-Origin": allowedOrigin,
           },
-        },
+        }
       );
     }
 
@@ -60,13 +59,9 @@ export async function POST(request: NextRequest) {
       files.map(async (file) => {
         const buffer = await file.arrayBuffer();
         const originalFileName = file.name;
-        const fileNameWithoutExtension = originalFileName
-          .split(".")
-          .slice(0, -1)
-          .join(".");
+        const fileNameWithoutExtension = originalFileName.split(".").slice(0, -1).join(".");
 
-        const { woff, woff2, originalSize, woffSize, woff2Size } =
-          await convertFont(buffer);
+        const { woff, woff2, originalSize, woffSize, woff2Size } = await convertFont(buffer);
 
         return {
           woff,
@@ -76,7 +71,7 @@ export async function POST(request: NextRequest) {
           woff2Size,
           originalFileName: fileNameWithoutExtension,
         };
-      }),
+      })
     );
 
     // Generate zip file
@@ -100,7 +95,7 @@ export async function POST(request: NextRequest) {
       files.map(async (file) => {
         const originalFileName = `${folderName}/${file.name}`;
         await uploadToR2(file, originalFileName);
-      }),
+      })
     );
 
     return NextResponse.json(
@@ -109,7 +104,7 @@ export async function POST(request: NextRequest) {
         headers: {
           "Access-Control-Allow-Origin": allowedOrigin,
         },
-      },
+      }
     );
   } catch (error) {
     console.error("Font conversion error:", error);
@@ -123,7 +118,7 @@ export async function POST(request: NextRequest) {
         headers: {
           "Access-Control-Allow-Origin": allowedOrigin,
         },
-      },
+      }
     );
   }
 }
