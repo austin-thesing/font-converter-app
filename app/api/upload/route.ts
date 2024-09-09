@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+//import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import JSZip from "jszip";
 import path from "path";
 
@@ -8,6 +12,7 @@ const CLOUDFLARE_ENDPOINT = process.env.CLOUDFLARE_ENDPOINT;
 const CLOUDFLARE_ACCESS_KEY_ID = process.env.CLOUDFLARE_ACCESS_KEY_ID;
 const CLOUDFLARE_SECRET_ACCESS_KEY = process.env.CLOUDFLARE_SECRET_ACCESS_KEY;
 const CLOUDFLARE_BUCKET_NAME = process.env.CLOUDFLARE_BUCKET_NAME;
+
 
 if (!CLOUDFLARE_BUCKET_NAME) {
   throw new Error("CLOUDFLARE_BUCKET_NAME is not set in environment variables");
@@ -26,7 +31,9 @@ const s3Client = new S3Client({
   },
 });
 
-const PUBLIC_BUCKET_URL = process.env.PUBLIC_BUCKET_URL || "https://pub-afa0440f6e2a4e5682caebff99d28c7b.r2.dev";
+const PUBLIC_BUCKET_URL =
+  process.env.PUBLIC_BUCKET_URL ||
+  "https://pub-afa0440f6e2a4e5682caebff99d28c7b.r2.dev";
 
 function generateTimestamp(): string {
   const now = new Date();
@@ -76,11 +83,12 @@ export async function POST(request: NextRequest) {
         fileName: file.name,
         uploadTimestamp: timestamp,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error in POST function:", error);
-    const errorMessage = error instanceof Error ? error.message : "Upload failed";
+    const errorMessage =
+      error instanceof Error ? error.message : "Upload failed";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
@@ -96,7 +104,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get the font file from R2
     const getCommand = new GetObjectCommand({
-      Bucket: CLOUDFLARE_BUCKET_NAME,
+      Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
       Key: key,
     });
 
@@ -119,7 +127,7 @@ export async function GET(request: NextRequest) {
     const zipFileName = `${fontName}_converted.zip`;
     const zipKey = `${path.dirname(key)}/${zipFileName}`;
     const putCommand = new PutObjectCommand({
-      Bucket: CLOUDFLARE_BUCKET_NAME,
+      Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
       Key: zipKey,
       Body: zipContent,
       ContentType: "application/zip",
@@ -135,7 +143,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ url: publicUrl, filename: zipFileName });
   } catch (error) {
     console.error("Error in GET function:", error);
-    return NextResponse.json({ error: "Failed to generate public URL" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to generate public URL" },
+      { status: 500 },
+    );
   }
 }
 
@@ -149,6 +160,6 @@ export async function OPTIONS(request: NextRequest) {
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
-    }
+    },
   );
 }
