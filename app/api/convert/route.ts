@@ -10,12 +10,12 @@ export async function POST(request: NextRequest) {
     ? process.env[`REPL_OWNER_${process.env.REPL_OWNER}_CLOUDFLARE_BUCKET_NAME`]
     : process.env.CLOUDFLARE_BUCKET_NAME;
 
-  console.log("CLOUDFLARE_BUCKET_NAME:", CLOUDFLARE_BUCKET_NAME);
+  // console.log("CLOUDFLARE_BUCKET_NAME:", CLOUDFLARE_BUCKET_NAME);
 
-  console.log("Environment variables:", {
-    CLOUDFLARE_BUCKET_NAME: process.env.CLOUDFLARE_BUCKET_NAME,
-    NODE_ENV: process.env.NODE_ENV,
-  });
+  // console.log("Environment variables:", {
+  //   CLOUDFLARE_BUCKET_NAME: process.env.CLOUDFLARE_BUCKET_NAME,
+  //   NODE_ENV: process.env.NODE_ENV,
+  // });
 
   if (!process.env.CLOUDFLARE_BUCKET_NAME) {
     console.error("CLOUDFLARE_BUCKET_NAME is not set in environment variables");
@@ -28,9 +28,15 @@ export async function POST(request: NextRequest) {
   }
   // Handle CORS
   const origin = request.headers.get("origin");
+  const allowedOrigins = [
+    "https://fc.designxdevelop.com",
+    "https://fc-dxd.replit.app/", // Replace with your actual Replit domain
+    "http://localhost:3000",
+    "http://localhost:3001",
+  ];
 
-  // Check if the origin is allowed (you can add more specific logic here)
-  const allowedOrigin = origin || "*";
+  // Check if the origin is allowed
+  const allowedOrigin = allowedOrigins.includes(origin!) ? origin! : allowedOrigins[0];
 
   // Preflight request
   if (request.method === "OPTIONS") {

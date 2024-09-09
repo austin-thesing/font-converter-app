@@ -6,6 +6,13 @@ const CLOUDFLARE_SECRET_ACCESS_KEY = process.env.CLOUDFLARE_SECRET_ACCESS_KEY;
 const CLOUDFLARE_BUCKET_NAME = process.env.CLOUDFLARE_BUCKET_NAME;
 const PUBLIC_BUCKET_URL = process.env.PUBLIC_BUCKET_URL;
 
+// Comment out the debug logging
+// console.log('Environment variables:');
+// console.log('CLOUDFLARE_ENDPOINT:', process.env.CLOUDFLARE_ENDPOINT);
+// console.log('CLOUDFLARE_ACCESS_KEY_ID:', process.env.CLOUDFLARE_ACCESS_KEY_ID);
+// console.log('CLOUDFLARE_SECRET_ACCESS_KEY:', process.env.CLOUDFLARE_SECRET_ACCESS_KEY);
+// console.log('CLOUDFLARE_BUCKET_NAME:', process.env.CLOUDFLARE_BUCKET_NAME);
+
 if (typeof window === "undefined") {
   // Server-side check
   if (!CLOUDFLARE_ENDPOINT || !CLOUDFLARE_ACCESS_KEY_ID || !CLOUDFLARE_SECRET_ACCESS_KEY || !CLOUDFLARE_BUCKET_NAME || !PUBLIC_BUCKET_URL) {

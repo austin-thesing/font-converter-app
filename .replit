@@ -3,7 +3,7 @@ build = "npm run build"
 modules = ["nodejs-20", "web"]
 
 [deployment]
-run = ["sh", "-c", "npm run deploy"]
+run = ["sh", "-c", "npm run start"]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
 
@@ -15,8 +15,8 @@ localPort = 3000
 externalPort = 80
 
 [[ports]]
-localPort = 3000
-externalPort = 3000
+localPort = 3001
+externalPort = 3001
 
 [env]
 REPLIT_NODEJS_PACKAGE_LAYER = "1"
