@@ -1,9 +1,9 @@
-run = "npm run start"
+run = "npm run dev"
 build = "npm run build"
 modules = ["nodejs-20", "web"]
 
 [deployment]
-run = ["sh", "-c", "npm run build && npm run start"]
+run = ["sh", "-c", "next build && npm run start"]
 deploymentTarget = "cloudrun"
 
 [nix]
@@ -16,3 +16,7 @@ externalPort = 80
 [[ports]]
 localPort = 3001
 externalPort = 3001
+
+[[ports]]
+localPort = 3002
+externalPort = 3002

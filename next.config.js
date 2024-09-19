@@ -1,22 +1,9 @@
 /** @type {import('next').NextConfig} */
-const { withSentryConfig } = require("@sentry/nextjs");
-
 const nextConfig = {
-  // your existing config
-};
-
-module.exports = withSentryConfig(
-  nextConfig,
-  {
-    silent: true,
-    org: "dxd-llc",
-    project: "font-converter",
+  // ... other config
+  experimental: {
+    instrumentationHook: true,
   },
-  {
-    widenClientFileUpload: true,
-    transpileClientSDK: true,
-    tunnelRoute: "/monitoring",
-    hideSourceMaps: true,
-    disableLogger: true,
-  }
-);
+}
+
+module.exports = nextConfig
