@@ -1,9 +1,9 @@
-run = "npm run dev"
-build = "npm run build"
+run = "bun run dev"
+build = "bun run build"
 modules = ["nodejs-20", "web"]
 
 [deployment]
-run = ["sh", "-c", "next build && npm run start"]
+run = ["sh", "-c", "bun run next build && bun run start"]
 deploymentTarget = "cloudrun"
 
 [nix]
@@ -12,11 +12,3 @@ channel = "stable-24_05"
 [[ports]]
 localPort = 3000
 externalPort = 80
-
-[[ports]]
-localPort = 3001
-externalPort = 3001
-
-[[ports]]
-localPort = 3002
-externalPort = 3002
