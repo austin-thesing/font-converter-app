@@ -1,6 +1,9 @@
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ... other config
   experimental: {
     instrumentationHook: false,
   },
@@ -18,8 +21,11 @@ const nextConfig = {
       { message: /Critical dependency: the request of a dependency is an expression/ }
     ];
 
+    // Enable module concatenation
+    config.optimization.concatenateModules = true;
+
     return config;
   },
 };
 
-module.exports = nextConfig
+module.exports = withBundleAnalyzer(nextConfig);
