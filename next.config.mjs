@@ -12,11 +12,15 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // ... other existing configurations ...
 };
 
 const sentryWebpackPluginOptions = {
-  // ... existing Sentry options ...
+  // project: undefined, // No project provided
+  telemetry: true, // Enable telemetry data
+  org: "dxd-llc", // Organization slug
+  project: "font-converter", // Project slug
+  authToken: process.env.SENTRY_AUTH_TOKEN, // Auth token for Sentry
+  dsn: process.env.SENTRY_DSN,
 };
 
 export default withSentryConfig(withBundleAnalyzer(nextConfig), sentryWebpackPluginOptions);
