@@ -2,11 +2,6 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 
 import { withSentryConfig } from "@sentry/nextjs";
-import bundleAnalyzer from "@next/bundle-analyzer";
-
-const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
-});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -15,12 +10,10 @@ const nextConfig = {
 };
 
 const sentryWebpackPluginOptions = {
-  // project: undefined, // No project provided
-  telemetry: true, // Enable telemetry data
-  org: "dxd-llc", // Organization slug
-  project: "font-converter", // Project slug
-  authToken: process.env.SENTRY_AUTH_TOKEN, // Auth token for Sentry
-  dsn: process.env.SENTRY_DSN,
+  org: "dxd-llc", // Make sure this matches your Sentry organization slug
+  project: "font-converter",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: true, // Suppresses all logs
 };
 
-export default withSentryConfig(withBundleAnalyzer(nextConfig), sentryWebpackPluginOptions);
+export default withSentryConfig(nextConfig, sentryWebpackPluginOptions);

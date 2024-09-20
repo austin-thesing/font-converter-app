@@ -1,16 +1,9 @@
-import dynamic from 'next/dynamic';
-import LoadingSpinner from './components/LoadingSpinner';
-
-// Dynamically import FontConverter with loading fallback
-const FontConverter = dynamic(() => import('./components/FontConverter'), {
-  loading: () => <LoadingSpinner />,
-  ssr: false // Disable server-side rendering for this component if it's not needed
-});
+import FontConverter from './components/FontConverter'
 
 export default function Home() {
   return (
-    <main>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <FontConverter />
     </main>
-  );
+  )
 }

@@ -15,18 +15,25 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+function DevBanner() {
+  if (process.env.NODE_ENV !== 'development') return null;
+  return (
+    <div className="bg-yellow-400 text-black text-center py-1">
+      Development Mode
+    </div>
+  );
+}
+
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {process.env.NODE_ENV !== "production" && <div style={{ background: "yellow", padding: "10px", textAlign: "center" }}>Development Mode</div>}
-        <ErrorBoundary fallback={<ErrorFallback />}>
-          {children}
-        </ErrorBoundary>
+        <DevBanner />
+        {children}
       </body>
     </html>
   );
