@@ -1,18 +1,19 @@
-run = "bun run dev"
-build = "bun run build"
-modules = ["nodejs-20", "web"]
+run = "npm run dev"
+entrypoint = "app/page.tsx"
+
+[env]
+NODE_ENV = "development"
 
 [deployment]
-run = ["sh", "-c", "bun run next build && bun run start"]
+run = "npm start"
 deploymentTarget = "cloudrun"
 
-[nix]
-channel = "stable-24_05"
+[deployment.env]
+NODE_ENV = "production"
 
 [[ports]]
 localPort = 3000
 externalPort = 80
 
-[[ports]]
-localPort = 3001
-externalPort = 3001
+[nix]
+channel = "stable-22_11"
