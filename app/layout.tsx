@@ -16,19 +16,11 @@ export const viewport: Viewport = {
 };
 
 function DevBanner() {
-  if (process.env.NODE_ENV !== 'development') return null;
-  return (
-    <div className="bg-yellow-400 text-black text-center py-1">
-      Development Mode
-    </div>
-  );
+  if (process.env.NODE_ENV !== "development") return null;
+  return <div className="bg-yellow-400 text-black text-center py-1">Development Mode</div>;
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -38,7 +30,6 @@ export default function RootLayout({
     </html>
   );
 }
-
 function ErrorFallback() {
   return <div>An error has occurred</div>;
 }

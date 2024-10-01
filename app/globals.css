@@ -26,3 +26,8 @@ body {
     text-wrap: balance;
   }
 }
+@media (max-width: 640px) {
+  .p-24 {
+    padding: 1.5rem;
+  }
+}
