@@ -233,14 +233,17 @@ export default function FontConverter() {
           <button onClick={handleDownloadZip} className={styles.downloadAllButton}>
             Download All as ZIP
           </button>
+          <button onClick={handleDownloadZip} className={styles.downloadAllButton}>
+            Download All as ZIP
+          </button>
           <ul className={styles.downloadList}>
             {convertedFonts.map((font, index) => (
               <li key={index} className={styles.fontItem}>
                 <p>{font.originalFileName}</p>
-                {font.woff && font.woffSize > 0 && (
                 <div className={styles.downloadButtons}>
-                  <a
-                    href={`data:font/woff;base64,${font.woff}`}
+                  {font.woff && font.woffSize > 0 && (
+                    <a
+                      href={`data:font/woff;base64,${font.woff}`}
                     download={`${font.originalFileName}.woff`}
                     className={styles.downloadButton}
                     onClick={() => posthog.capture("individual_font_downloaded", { format: "woff", fileName: font.originalFileName })}
