@@ -19,10 +19,13 @@ export async function POST(request: NextRequest) {
 
     console.log(`Starting conversion of ${files.length} files...`);
 
+    const totalFiles = files.length;
+    let completedFiles = 0;
+
     const convertedFonts = await Promise.all(
-      files.map(async (file) => {
+      files.map(async (file, index) => {
         try {
-          console.log(`Starting conversion for file: ${file.name}`);
+          console.log(`Starting conversion for file ${index + 1}/${totalFiles}: ${file.name}`);
           const buffer = await file.arrayBuffer();
           const originalFileName = file.name;
           console.log(`File ${file.name} loaded into buffer, size: ${buffer.byteLength} bytes`);
