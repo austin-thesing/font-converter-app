@@ -10,6 +10,7 @@ export default function FontConverter() {
   const [convertedFonts, setConvertedFonts] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [recentConversions, setRecentConversions] = useState<{ name: string; date: string; url: string }[]>([]);
 
   useEffect(() => {
@@ -71,10 +72,22 @@ export default function FontConverter() {
       formData.append("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
 
       const startTime = Date.now();
+      setProgress(0);
       const response = await fetch("/api/convert", {
         method: "POST",
         body: formData,
       });
+
+      // Start progress simulation
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 95) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 5;
+        });
+      }, 1000);
 
       if (!response.ok) {
         throw new Error("Font conversion failed");
@@ -82,6 +95,7 @@ export default function FontConverter() {
 
       const result = await response.json();
       setConvertedFonts(result.convertedFonts);
+      setProgress(100);
 
       // Update recent conversions with the R2 public URL and new name format
       const newConversion = {
@@ -201,7 +215,14 @@ export default function FontConverter() {
         </div>
       )}
 
-      {isLoading && <p className={styles.loading}>Converting fonts, please wait...</p>}
+      {isLoading && (
+        <div className={styles.loadingContainer}>
+          <p className={styles.loading}>Converting fonts ({progress}% complete)...</p>
+          <div className={styles.progressBar}>
+            <div className={styles.progressFill} style={{ width: `${progress}%` }}></div>
+          </div>
+        </div>
+      )}
 
       {error && <p className={styles.error}>{error}</p>}
 

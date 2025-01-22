@@ -329,3 +329,23 @@
     padding: 12px 15px;
   }
 }
+
+.loadingContainer {
+  margin: 20px 0;
+  width: 100%;
+}
+
+.progressBar {
+  width: 100%;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #0070f3;
+  transition: width 0.3s ease-in-out;
+}
