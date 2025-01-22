@@ -85,13 +85,17 @@ export default function FontConverter() {
       }
 
       const result = await response.json();
-      setConvertedFonts(result.convertedFonts);
+      if (!response.ok) {
+        throw new Error("Font conversion failed");
+      }
 
-      // Calculate progress based on successful conversions
-      const successCount = result.convertedFonts.filter(
-        font => (font.woff && font.woffSize > 0) || (font.woff2 && font.woff2Size > 0)
-      ).length;
-      
+      const validConversions = result.convertedFonts.map(font => ({
+        ...font,
+        woffSize: font.woffSize || 0,
+        woff2Size: font.woff2Size || 0
+      })).filter(font => font.woffSize > 0 || font.woff2Size > 0);
+
+      setConvertedFonts(validConversions);
       setProgress(100);
 
       // Update recent conversions with the R2 public URL and new name format
