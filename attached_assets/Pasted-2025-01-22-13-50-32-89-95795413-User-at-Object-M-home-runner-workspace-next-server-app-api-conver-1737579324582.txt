@@ -1,0 +1,124 @@
+2025-01-22 13:50:32.89
+95795413
+User
+at Object.M (/home/runner/workspace/.next/server/app/api/convert/route.js:1:6862)
+2025-01-22 13:50:32.89
+95795413
+User
+at /home/runner/workspace/.next/server/app/api/convert/route.js:1:20482
+2025-01-22 13:50:32.89
+95795413
+User
+at $ (/home/runner/workspace/.next/server/app/api/convert/route.js:1:19864)
+2025-01-22 13:50:32.89
+95795413
+User
+at new AC (/home/runner/workspace/.next/server/app/api/convert/route.js:1:20406)
+2025-01-22 13:50:32.89
+95795413
+User
+at Object.make (/home/runner/workspace/.next/server/app/api/convert/route.js:1:96636)
+2025-01-22 13:50:32.89
+95795413
+User
+at Object.fontToTable (/home/runner/workspace/.next/server/app/api/convert/route.js:1:101061)
+2025-01-22 13:50:32.89
+95795413
+User
+at gm.toTables (/home/runner/workspace/.next/server/app/api/convert/route.js:1:160643)
+2025-01-22 13:50:32.89
+95795413
+User
+at gm.toArrayBuffer (/home/runner/workspace/.next/server/app/api/convert/route.js:1:160854)
+2025-01-22 13:50:32.89
+95795413
+User
+at gO (/home/runner/workspace/.next/server/app/api/convert/route.js:1:171082)
+2025-01-22 13:51:30.79
+95795413
+User
+Font conversion error: Error: Unable to write GSUB: script latn has no default language system.
+2025-01-22 13:51:30.79
+95795413
+User
+at /home/runner/workspace/.next/server/app/api/convert/route.js:1:6853
+2025-01-22 13:51:30.79
+95795413
+User
+at Object.M (/home/runner/workspace/.next/server/app/api/convert/route.js:1:6862)
+2025-01-22 13:51:30.79
+95795413
+User
+at /home/runner/workspace/.next/server/app/api/convert/route.js:1:20482
+2025-01-22 13:51:30.79
+95795413
+User
+at $ (/home/runner/workspace/.next/server/app/api/convert/route.js:1:19864)
+2025-01-22 13:51:30.79
+95795413
+User
+at new AC (/home/runner/workspace/.next/server/app/api/convert/route.js:1:20406)
+2025-01-22 13:51:30.79
+95795413
+User
+at Object.make (/home/runner/workspace/.next/server/app/api/convert/route.js:1:96636)
+2025-01-22 13:51:30.79
+95795413
+User
+at Object.fontToTable (/home/runner/workspace/.next/server/app/api/convert/route.js:1:101061)
+2025-01-22 13:51:30.79
+95795413
+User
+at gm.toTables (/home/runner/workspace/.next/server/app/api/convert/route.js:1:160643)
+2025-01-22 13:51:30.79
+95795413
+User
+at gm.toArrayBuffer (/home/runner/workspace/.next/server/app/api/convert/route.js:1:160854)
+2025-01-22 13:51:30.79
+95795413
+User
+at gO (/home/runner/workspace/.next/server/app/api/convert/route.js:1:171082)
+2025-01-22 13:53:01.80
+95795413
+User
+Font conversion error: Error: Unable to write GSUB: script latn has no default language system.
+2025-01-22 13:53:01.80
+95795413
+User
+at /home/runner/workspace/.next/server/app/api/convert/route.js:1:6853
+2025-01-22 13:53:01.80
+95795413
+User
+at Object.M (/home/runner/workspace/.next/server/app/api/convert/route.js:1:6862)
+2025-01-22 13:53:01.80
+95795413
+User
+at /home/runner/workspace/.next/server/app/api/convert/route.js:1:20482
+2025-01-22 13:53:01.80
+95795413
+User
+at $ (/home/runner/workspace/.next/server/app/api/convert/route.js:1:19864)
+2025-01-22 13:53:01.80
+95795413
+User
+at new AC (/home/runner/workspace/.next/server/app/api/convert/route.js:1:20406)
+2025-01-22 13:53:01.80
+95795413
+User
+at Object.make (/home/runner/workspace/.next/server/app/api/convert/route.js:1:96636)
+2025-01-22 13:53:01.80
+95795413
+User
+at Object.fontToTable (/home/runner/workspace/.next/server/app/api/convert/route.js:1:101061)
+2025-01-22 13:53:01.80
+95795413
+User
+at gm.toTables (/home/runner/workspace/.next/server/app/api/convert/route.js:1:160643)
+2025-01-22 13:53:01.80
+95795413
+User
+at gm.toArrayBuffer (/home/runner/workspace/.next/server/app/api/convert/route.js:1:160854)
+2025-01-22 13:53:01.80
+95795413
+User
+at gO (/home/runner/workspace/.next/server/app/api/convert/route.js:1:171082)
