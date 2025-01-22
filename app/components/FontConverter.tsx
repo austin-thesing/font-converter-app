@@ -78,20 +78,22 @@ export default function FontConverter() {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      const successfulConversions = result.convertedFonts.filter(
-        font => font.woff && (!font.woff2 || font.woff2Size > 0)
-      ).length;
-      setProgress((successfulConversions / files.length) * 100);
+      // Start progress simulation
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 95) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 5;
+        });
+      }, 1000);
 
       if (!response.ok) {
         throw new Error("Font conversion failed");
       }
 
+      const result = await response.json();
       setConvertedFonts(result.convertedFonts);
       setProgress(100);
 
