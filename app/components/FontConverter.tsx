@@ -53,6 +53,8 @@ export default function FontConverter() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setProgress(0);
+    setConvertedFonts([]);
 
     try {
       const formData = new FormData();
@@ -81,7 +83,7 @@ export default function FontConverter() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const result = await response.json();
       const successfulConversions = result.convertedFonts.filter(
         font => font.woff && (!font.woff2 || font.woff2Size > 0)

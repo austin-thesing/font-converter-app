@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     
     logProgress();
 
-    const convertedFonts = await Promise.all(
+    const results = await Promise.allSettled(
       files.map(async (file, index) => {
         try {
           const buffer = await file.arrayBuffer();
@@ -42,21 +42,36 @@ export async function POST(request: NextRequest) {
           completedFiles++;
           logProgress();
           return {
+            status: 'success',
             ...result,
             originalFileName: fileNameWithoutExtension,
           };
         } catch (error) {
           console.error(`Error converting ${file.name}:`, error);
-          throw error;
+          return {
+            status: 'error',
+            originalFileName: file.name,
+            error: error.message
+          };
         }
       })
     );
 
     console.log("Generating zip file...");
     const zip = new JSZip();
-    convertedFonts.forEach((font) => {
-      zip.file(`${font.originalFileName}.woff`, font.woff, { base64: true });
-      zip.file(`${font.originalFileName}.woff2`, font.woff2, { base64: true });
+    const convertedFonts = results.map(result => {
+      if (result.status === 'fulfilled' && result.value.status === 'success') {
+        zip.file(`${result.value.originalFileName}.woff`, result.value.woff, { base64: true });
+        if (result.value.woff2) {
+          zip.file(`${result.value.originalFileName}.woff2`, result.value.woff2, { base64: true });
+        }
+        return result.value;
+      }
+      return {
+        originalFileName: result.value.originalFileName,
+        error: result.value.error,
+        status: 'error'
+      };
     });
     const zipContent = await zip.generateAsync({ type: "blob" });
 
