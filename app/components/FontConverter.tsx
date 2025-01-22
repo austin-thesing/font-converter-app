@@ -82,7 +82,6 @@ export default function FontConverter() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      // Calculate progress based on actual conversions
       const result = await response.json();
       const successfulConversions = result.convertedFonts.filter(
         font => font.woff && (!font.woff2 || font.woff2Size > 0)
@@ -93,7 +92,6 @@ export default function FontConverter() {
         throw new Error("Font conversion failed");
       }
 
-      const result = await response.json();
       setConvertedFonts(result.convertedFonts);
       setProgress(100);
 
