@@ -22,9 +22,10 @@ export async function POST(request: NextRequest) {
     const convertedFonts = await Promise.all(
       files.map(async (file) => {
         try {
-          console.log(`Converting file: ${file.name}`);
+          console.log(`Starting conversion for file: ${file.name}`);
           const buffer = await file.arrayBuffer();
           const originalFileName = file.name;
+          console.log(`File ${file.name} loaded into buffer, size: ${buffer.byteLength} bytes`);
           const fileNameWithoutExtension = originalFileName.split(".").slice(0, -1).join(".");
 
           const result = await convertFont(buffer);
