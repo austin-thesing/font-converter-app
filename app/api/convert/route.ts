@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     
     logProgress();
 
-    const results = await Promise.allSettled(
+    const convertedFonts = await Promise.all(
       files.map(async (file, index) => {
         try {
           const buffer = await file.arrayBuffer();
@@ -42,36 +42,22 @@ export async function POST(request: NextRequest) {
           completedFiles++;
           logProgress();
           return {
-            status: 'success',
             ...result,
             originalFileName: fileNameWithoutExtension,
           };
         } catch (error) {
           console.error(`Error converting ${file.name}:`, error);
-          return {
-            status: 'error',
-            originalFileName: file.name,
-            error: error.message
-          };
+          throw error;
         }
       })
     );
 
     console.log("Generating zip file...");
     const zip = new JSZip();
-    const convertedFonts = results
-      .filter(result => result.status === 'fulfilled' && result.value.status === 'success')
-      .map(result => {
-        const font = result.value;
-        // Only add successfully converted formats to zip and results
-        if (font.woff) {
-          zip.file(`${font.originalFileName}.woff`, font.woff, { base64: true });
-        }
-        if (font.woff2) {
-          zip.file(`${font.originalFileName}.woff2`, font.woff2, { base64: true });
-        }
-        return font;
-      });
+    convertedFonts.forEach((font) => {
+      zip.file(`${font.originalFileName}.woff`, font.woff, { base64: true });
+      zip.file(`${font.originalFileName}.woff2`, font.woff2, { base64: true });
+    });
     const zipContent = await zip.generateAsync({ type: "blob" });
 
     const fontName = files[0].name.split(".")[0];
