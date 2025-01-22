@@ -85,16 +85,13 @@ export default function FontConverter() {
       }
 
       const result = await response.json();
-      const successfulConversions = result.convertedFonts.filter(
-        font => font.woff && (!font.woff2 || font.woff2Size > 0)
-      ).length;
-      setProgress((successfulConversions / files.length) * 100);
-
-      if (!response.ok) {
-        throw new Error("Font conversion failed");
-      }
-
       setConvertedFonts(result.convertedFonts);
+
+      // Calculate progress based on successful conversions
+      const successCount = result.convertedFonts.filter(
+        font => (font.woff && font.woffSize > 0) || (font.woff2 && font.woff2Size > 0)
+      ).length;
+      
       setProgress(100);
 
       // Update recent conversions with the R2 public URL and new name format
