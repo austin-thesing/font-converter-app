@@ -237,6 +237,7 @@ export default function FontConverter() {
             {convertedFonts.map((font, index) => (
               <li key={index} className={styles.fontItem}>
                 <p>{font.originalFileName}</p>
+                {font.woff && font.woffSize > 0 && (
                 <div className={styles.downloadButtons}>
                   <a
                     href={`data:font/woff;base64,${font.woff}`}
@@ -248,6 +249,8 @@ export default function FontConverter() {
                   </a>
                   <span className={styles.fileSize}>(New size: {formatFileSize(font.woffSize)})</span>
                 </div>
+              )}
+              {font.woff2 && font.woff2Size > 0 && (
                 <div className={styles.downloadButtons}>
                   <a
                     href={`data:font/woff2;base64,${font.woff2}`}
@@ -259,6 +262,7 @@ export default function FontConverter() {
                   </a>
                   <span className={styles.fileSize}>(New size: {formatFileSize(font.woff2Size)})</span>
                 </div>
+              )}
               </li>
             ))}
           </ul>
