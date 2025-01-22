@@ -17,22 +17,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No files uploaded" }, { status: 400 });
     }
 
-    console.log(`Starting conversion of ${files.length} files...`);
-
+    const startTime = Date.now();
     const totalFiles = files.length;
     let completedFiles = 0;
+    console.log(`\n\x1b[1m🚀 Starting batch conversion of ${files.length} files...\x1b[0m\n`);
+
+    const logProgress = () => {
+      const percent = Math.round((completedFiles / totalFiles) * 100);
+      const bar = '█'.repeat(Math.floor(percent/4)) + '░'.repeat(25 - Math.floor(percent/4));
+      console.log(`\x1b[36m[${bar}] ${percent}% | ${completedFiles}/${totalFiles} files\x1b[0m`);
+    };
+    
+    logProgress();
 
     const convertedFonts = await Promise.all(
       files.map(async (file, index) => {
         try {
-          console.log(`Starting conversion for file ${index + 1}/${totalFiles}: ${file.name}`);
           const buffer = await file.arrayBuffer();
+          console.log(`\n\x1b[33m[${index + 1}/${totalFiles}]\x1b[0m Processing ${file.name} (${(buffer.byteLength/1024).toFixed(1)}KB)`);
           const originalFileName = file.name;
-          console.log(`File ${file.name} loaded into buffer, size: ${buffer.byteLength} bytes`);
           const fileNameWithoutExtension = originalFileName.split(".").slice(0, -1).join(".");
 
           const result = await convertFont(buffer);
-          console.log(`Successfully converted ${file.name}`);
+          completedFiles++;
+          logProgress();
           return {
             ...result,
             originalFileName: fileNameWithoutExtension,
