@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import styles from './FontConverter.module.css';
 import styles from "./FontConverter.module.css";
 import JSZip from "jszip";
 import posthog from "../../lib/posthog";
