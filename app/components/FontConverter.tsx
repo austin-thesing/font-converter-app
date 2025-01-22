@@ -175,7 +175,7 @@ export default function FontConverter() {
     setRecentConversions([]);
     localStorage.removeItem("recentConversions");
     posthog.capture("recent_conversions_cleared");
-  }
+  };
 
   return (
     <div className={styles.container}>
