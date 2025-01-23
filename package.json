@@ -1,14 +1,15 @@
+
 {
   "name": "font-converter-app",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "/nix/store/2l0rhsa5pjdg5j0id60f5w5lw6r9g4rp-bun-1.1.40/bin/bun next dev",
-    "start": "/nix/store/2l0rhsa5pjdg5j0id60f5w5lw6r9g4rp-bun-1.1.40/bin/bun next start",
-    "build": "/nix/store/2l0rhsa5pjdg5j0id60f5w5lw6r9g4rp-bun-1.1.40/bin/bun next build",
-    "lint": "/nix/store/2l0rhsa5pjdg5j0id60f5w5lw6r9g4rp-bun-1.1.40/bin/bun next lint",
-    "analyze": "ANALYZE=true /nix/store/2l0rhsa5pjdg5j0id60f5w5lw6r9g4rp-bun-1.1.40/bin/bun next build"
+    "dev": "bunx --bun next dev",
+    "start": "bunx --bun next start",
+    "build": "bunx --bun next build",
+    "lint": "bunx --bun next lint",
+    "analyze": "ANALYZE=true bunx --bun next build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.637.0",
@@ -41,7 +42,6 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": ">=20.0.0",
-    "bun": ">=1.0.0"
+    "bun": ">=1.2.0"
   }
 }
