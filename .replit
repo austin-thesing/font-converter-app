@@ -9,8 +9,8 @@
 # localPort = 3000
 # externalPort = 80
 
-run = "next dev"
-build = "next build"
+run = "bun dev"
+build = "bun build"
 modules = ["bun-1.1", "nodejs-20"]
 [nix]
 channel = "stable-24_05"
@@ -19,8 +19,8 @@ channel = "stable-24_05"
 NEXT_TELEMETRY_DISABLED = "1"
 
 [deployment]
-build = ["npm", "run", "build"]
-run = ["npm", "run", "start"]
+build = ["bunx", "run", "build"]
+run = ["bunx", "run", "start"]
 deploymentTarget = "cloudrun"
 
 [[ports]]
