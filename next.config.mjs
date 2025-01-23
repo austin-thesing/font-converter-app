@@ -11,12 +11,17 @@ const nextConfig = {
   webpack: (config) => {
     return config;
   },
-  webSocketTimeout: 30000,
   experimental: {
-    webpackBuildWorker: true,
+    webpackBuildWorker: true
   },
-  // Required for Replit
-  hostname: "0.0.0.0"
+  async rewrites() {
+    return [
+      {
+        source: '/:path*',
+        destination: `http://0.0.0.0:3000/:path*`
+      }
+    ];
+  }
 };
 
 const sentryWebpackPluginOptions = {
