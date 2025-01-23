@@ -53,6 +53,8 @@ export default function FontConverter() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    const startTime = Date.now();
+    setProgress(0);
 
     try {
       const formData = new FormData();
@@ -60,34 +62,28 @@ export default function FontConverter() {
         formData.append(`file`, file);
       });
 
-      // Generate a human-readable timestamp
       const timestamp = formatTimestamp(new Date());
-
-      // Create a name for the conversion using the font names and timestamp
       const fontNames = files.map((f) => f.name.split(".")[0]).join(", ");
-      const conversionName = `convertedfonts_${timestamp}`; // Updated format
+      const conversionName = `convertedfonts_${timestamp}`;
 
-      // Add the conversionName and timezone to the formData
       formData.append("conversionName", conversionName);
       formData.append("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
 
-      const startTime = Date.now();
-      setProgress(0);
+      // Simplified progress tracking
+      let progressValue = 0;
+      const progressInterval = setInterval(() => {
+        if (progressValue < 95) {
+          progressValue += 5;
+          setProgress(progressValue);
+        }
+      }, 1000);
+
       const response = await fetch("/api/convert", {
         method: "POST",
         body: formData,
       });
 
-      // Start progress simulation
-      const progressInterval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 95) {
-            clearInterval(progressInterval);
-            return prev;
-          }
-          return prev + 5;
-        });
-      }, 1000);
+      clearInterval(progressInterval);
 
       if (!response.ok) {
         throw new Error("Font conversion failed");
@@ -99,7 +95,7 @@ export default function FontConverter() {
 
       // Update recent conversions with the R2 public URL and new name format
       const newConversion = {
-        name: `${fontNames} (${timestamp.replace("_", " ")})`, // Add space for display
+        name: `${fontNames} (${timestamp.replace("_", " ")})`,
         date: new Date().toISOString(),
         url: result.downloadUrl,
       };
@@ -107,20 +103,20 @@ export default function FontConverter() {
       setRecentConversions(updatedConversions);
       localStorage.setItem("recentConversions", JSON.stringify(updatedConversions));
 
-      posthog.capture("fonts_converted", {
+      // Single PostHog event with all conversion data
+      posthog.capture("conversion_completed", {
         count: files.length,
-        conversionTime: Date.now() - startTime, // Add conversion time
-      });
-
-      // New event: Capture conversion success rate
-      posthog.capture("conversion_success_rate", {
-        total: files.length,
+        conversionTime: Date.now() - startTime,
         successful: result.convertedFonts.length,
+        total: files.length,
+        successRate: (result.convertedFonts.length / files.length) * 100
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unknown error occurred");
-      // New event: Capture conversion failure
-      posthog.capture("conversion_failed", { error: err instanceof Error ? err.message : "Unknown error" });
+      posthog.capture("conversion_failed", { 
+        error: err instanceof Error ? err.message : "Unknown error",
+        count: files.length
+      });
     } finally {
       setIsLoading(false);
     }

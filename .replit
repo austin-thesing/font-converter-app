@@ -11,7 +11,7 @@
 
 run = "next dev"
 build = "next build"
-modules = ["nodejs-20"]
+modules = ["bun-1.1", "nodejs-20"]
 [nix]
 channel = "stable-24_05"
 
