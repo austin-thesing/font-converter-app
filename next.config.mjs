@@ -14,12 +14,17 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true
   },
-  async rewrites() {
+  async headers() {
     return [
       {
         source: '/:path*',
-        destination: `http://0.0.0.0:3000/:path*`
-      }
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+        ],
+      },
     ];
   }
 };
