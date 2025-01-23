@@ -1,9 +1,12 @@
-import FontConverter from './components/FontConverter'
+
+import FontConverter from './components/FontConverter';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <FontConverter />
+    <main className="min-h-screen flex flex-col items-center p-4 md:p-24">
+      <div className="w-full max-w-4xl">
+        <FontConverter />
+      </div>
     </main>
-  )
+  );
 }
