@@ -11,7 +11,7 @@
 
 run = "bun dev"
 build = "bun build"
-modules = ["bun-1.1", "nodejs-20"]
+modules = ["bun-1.1", "nodejs-20", "bun-1.2"]
 [nix]
 channel = "stable-24_05"
 
