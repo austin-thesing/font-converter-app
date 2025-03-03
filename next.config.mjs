@@ -17,6 +17,14 @@ const nextConfig = {
   output: 'standalone',
   // Make sure routing works properly
   trailingSlash: false,
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: '/api/:path*',
+      },
+    ];
+  },
   async headers() {
     return [
       {

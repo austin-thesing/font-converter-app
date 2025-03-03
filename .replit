@@ -44,4 +44,4 @@ author = 16457168
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "bun run dev"
+args = "bun --bun run dev -- -H 0.0.0.0"
