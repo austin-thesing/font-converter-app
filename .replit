@@ -34,3 +34,14 @@ externalPort = 3001
 [[ports]]
 localPort = 3002
 externalPort = 3002
+
+[workflows]
+runButton = "Run App"
+
+[[workflows.workflow]]
+name = "Run App"
+author = 16457168
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bun run next dev"
