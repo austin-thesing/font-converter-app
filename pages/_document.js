@@ -1,13 +1,3 @@
-import { Html, Head, Main, NextScript } from 'next/document'
 
-export default function Document() {
-  return (
-    <Html lang="en">
-      <Head />
-      <body>
-        <Main />
-        <NextScript />
-      </body>
-    </Html>
-  )
-}
+// This file has been removed to prevent routing conflicts.
+// The app is using App Router (/app directory) instead of Pages Router.
