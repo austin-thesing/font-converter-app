@@ -5,8 +5,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bunx --bun next dev",
-    "start": "bunx --bun next start",
+    "dev": "bunx --bun next dev -H 0.0.0.0",
+    "start": "bunx --bun next start -H 0.0.0.0",
     "build": "bunx --bun next build",
     "lint": "bunx --bun next lint",
     "analyze": "ANALYZE=true bunx --bun next build"
