@@ -14,6 +14,9 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true
   },
+  output: 'standalone',
+  // Make sure routing works properly
+  trailingSlash: false,
   async headers() {
     return [
       {
