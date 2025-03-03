@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { convertFont } from "../../../lib/fontConverter";
 import { uploadToR2 } from "../../../lib/r2";
@@ -44,7 +43,9 @@ export async function POST(request: NextRequest) {
     const zip = new JSZip();
     convertedFonts.forEach((font) => {
       zip.file(`${font.originalFileName}.woff`, font.woff, { base64: true });
-      zip.file(`${font.originalFileName}.woff2`, font.woff2, { base64: true });
+      if (font.woff2) {
+        zip.file(`${font.originalFileName}.woff2`, font.woff2, { base64: true });
+      }
     });
     const zipContent = await zip.generateAsync({ type: "blob" });
 

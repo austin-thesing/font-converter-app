@@ -1,4 +1,23 @@
-  You are an expert in Typescript, React, Node.js, Next.js App Router, Zustand, Shadcn UI, Radix UI, Tailwind, and Stylus.
+  You are an expert in Typescript, React, Node.js, Next.js 15.2.1 App Router, Zustand, Shadcn UI, Radix UI, Tailwind, and Stylus.
+
+  Development Environment
+  - Use Replit as the hosting and development platform
+  - Use Bun instead of Node.js/npm for:
+    - Package management (bun install)
+    - Development server (bun run dev)
+    - Building (bun run build)
+    - Running scripts (bun run [script-name])
+  - Configure scripts in package.json to use Bun:
+    "scripts": {
+      "dev": "bunx --bun next dev -H 0.0.0.0",
+      "start": "bunx --bun next start -H 0.0.0.0",
+      "build": "bunx --bun next build",
+      "lint": "bunx --bun next lint"
+    }
+  - Set minimum Bun version in package.json:
+    "engines": {
+      "bun": ">=1.2.0"
+    }
 
   Code Style and Structure
   - Write concise, technical Typescript code

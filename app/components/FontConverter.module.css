@@ -1,8 +1,9 @@
 .container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   width: 100%;
+  color: #fff;
 }
 
 .uploadSection {
@@ -21,7 +22,7 @@
 
 .chooseFilesButton {
   display: inline-block;
-  background-color: #2196f3;
+  background-color: #3b82f6;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -29,28 +30,35 @@
   cursor: pointer;
   font-size: 14px;
   margin-right: 10px;
+  transition: background-color 0.2s;
 }
 
 .chooseFilesButton:hover {
-  background-color: #1e87db;
+  background-color: #2563eb;
 }
 
 .fileInfo {
   font-size: 14px;
+  color: #e5e7eb;
 }
 
 .convertButton {
-  background-color: #4caf50;
+  background-color: #10b981;
   color: white;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.convertButton:hover {
+  background-color: #059669;
 }
 
 .convertButton:disabled {
-  background-color: #cccccc;
+  background-color: #374151;
   cursor: not-allowed;
 }
 
@@ -66,27 +74,30 @@
 .selectedFiles {
   margin-right: 10px;
   font-size: 14px;
+  color: #e5e7eb;
 }
 
 .fileList {
   margin-bottom: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #374151;
   padding: 10px;
   border-radius: 5px;
+  background-color: #1f2937;
 }
 
 .fileInfo {
   margin-top: 10px;
   font-weight: bold;
+  color: #e5e7eb;
 }
 
-.loading,
-.error {
+.loading {
   margin: 10px 0;
+  color: #e5e7eb;
 }
 
 .error {
-  color: red;
+  color: #ef4444;
 }
 
 .results {
@@ -94,7 +105,7 @@
 }
 
 .downloadAllButton {
-  background-color: #4caf50;
+  background-color: #10b981;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -102,6 +113,11 @@
   cursor: pointer;
   width: 100%;
   margin-bottom: 20px;
+  transition: background-color 0.2s;
+}
+
+.downloadAllButton:hover {
+  background-color: #059669;
 }
 
 .downloadList {
@@ -111,9 +127,10 @@
 
 .fontItem {
   margin-bottom: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #374151;
   padding: 10px;
   border-radius: 5px;
+  background-color: #1f2937;
 }
 
 .downloadButtons {
@@ -124,7 +141,7 @@
 }
 
 .downloadButton {
-  background-color: #0070f3;
+  background-color: #3b82f6;
   color: white;
   text-decoration: none;
   padding: 5px 10px;
@@ -133,17 +150,22 @@
   margin-right: 0;
   margin-bottom: 10px;
   text-align: center;
+  transition: background-color 0.2s;
+}
+
+.downloadButton:hover {
+  background-color: #2563eb;
 }
 
 .fileSize {
   font-size: 0.9em;
-  color: #666;
+  color: #9ca3af;
 }
 
 .introText {
   margin-bottom: 20px;
   padding: 15px;
-  background-color: #f0f0f0;
+  background-color: #1f2937;
   border-radius: 5px;
 }
 
@@ -151,26 +173,28 @@
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 24px;
-  color: #333;
+  color: #fff;
 }
 
 .introText p {
   margin: 0;
   font-size: 14px;
   line-height: 1.5;
-  color: #666;
+  color: #9ca3af;
 }
 
 .recentConversions {
   margin-top: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #374151;
   padding: 10px;
   border-radius: 5px;
+  background-color: #1f2937;
 }
 
 .recentConversions h3 {
   margin-top: 0;
   margin-bottom: 10px;
+  color: #fff;
 }
 
 .recentConversions ul {
@@ -183,43 +207,31 @@
 }
 
 .recentConversions a {
-  color: #0070f3;
+  color: #3b82f6;
   text-decoration: none;
 }
 
 .recentConversions a:hover {
   text-decoration: underline;
+  color: #2563eb;
 }
 
 .clearRecentLink {
   display: inline-block;
   margin-top: 1.5rem;
-  color: #ff6b6b;
+  color: #ef4444;
   text-decoration: none;
   font-size: 0.9em;
   transition: color 0.3s ease;
 }
 
 .clearRecentLink:hover {
-  color: white;
-}
-
-.recentConversions .clearRecentLink {
-  display: inline-block;
-  margin-top: 1.5rem;
-  color: #ff6b6b;
-  text-decoration: none;
-  font-size: 0.9em;
-  transition: color 0.3s ease;
-}
-
-.recentConversions .clearRecentLink:hover {
-  color: white;
+  color: #dc2626;
 }
 
 .footer {
   font-size: 0.8rem;
-  color: #666;
+  color: #9ca3af;
   text-align: center;
   margin-top: 4rem;
   padding: 1rem 0;
@@ -227,12 +239,12 @@
 
 .footerLink {
   text-decoration: underline;
-  color: #666;
+  color: #9ca3af;
   transition: color 0.3s ease;
 }
 
 .footerLink:hover {
-  color: white;
+  color: #fff;
 }
 
 .container {
@@ -338,7 +350,7 @@
 .progressBar {
   width: 100%;
   height: 20px;
-  background-color: #f0f0f0;
+  background-color: #374151;
   border-radius: 10px;
   overflow: hidden;
   margin-top: 10px;
@@ -346,6 +358,6 @@
 
 .progressFill {
   height: 100%;
-  background-color: #0070f3;
+  background-color: #3b82f6;
   transition: width 0.3s ease-in-out;
 }

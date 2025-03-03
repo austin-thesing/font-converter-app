@@ -1,8 +1,6 @@
-
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ErrorBoundary } from "@sentry/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,18 +19,12 @@ function DevBanner() {
   return <div className="bg-yellow-400 text-black text-center py-1">Development Mode</div>;
 }
 
-function ErrorFallback() {
-  return <div>An error has occurred</div>;
-}
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${inter.className} bg-white`}>
         <DevBanner />
-        <ErrorBoundary fallback={<ErrorFallback />}>
-          {children}
-        </ErrorBoundary>
+        {children}
       </body>
     </html>
   );
