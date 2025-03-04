@@ -19,8 +19,8 @@ channel = "stable-24_05"
 NEXT_TELEMETRY_DISABLED = "1"
 
 [deployment]
-build = ["bunx", "run", "build"]
-run = ["bunx", "run", "start"]
+build = ["sh", "-c", "bun run build"]
+run = ["sh", "-c", "bun run start"]
 deploymentTarget = "cloudrun"
 
 [[ports]]
